@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const url = 'http://localhost:3000/api/auth'
+const url = 'http://localhost:3000/api/auth' || 'https://fronten-auth.vercel.app/api/auth'
 
 const api = axios.create({
     baseURL: url,
