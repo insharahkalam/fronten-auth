@@ -22,6 +22,9 @@ const Login = () => {
 
             localStorage.setItem("token", res.data.token)
             localStorage.setItem("role", res.data.logUser.role)
+            localStorage.setItem("username", res.data.logUser.username)
+            localStorage.setItem("email", res.data.logUser.email)
+            localStorage.setItem("id", res.data.logUser._id)
 
 
 
