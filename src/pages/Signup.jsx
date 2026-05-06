@@ -15,7 +15,7 @@ const Signup = () => {
     const navigate = useNavigate()
 
     const handleSignup = async () => {
-        console.log("data aarha hai", name, email, password, role);
+        console.log("data aarha hai", username, email, password, role);
 
         try {
             const res = await api.post('/users', {
