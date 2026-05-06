@@ -7,7 +7,6 @@ const Login = () => {
     const [email, setEmail] = useState("")
     const [password, setPassword] = useState("")
 
-    const [errorMsg, setErrorMsg] = useState('')
     const navigate = useNavigate()
 
 
@@ -15,7 +14,7 @@ const Login = () => {
         console.log("kam kr rha hai");
 
         try {
-            const res = await api.post('/login', {
+            const res = await api.post('/loginUser', {
                 email,
                 password
             })
