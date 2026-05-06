@@ -40,7 +40,6 @@ const Login = () => {
         } catch (error) {
             console.log(error.message, "login error");
             const msg = error.response?.data?.message || 'something went wrong'
-            setErrorMsg(msg)
             console.log(msg, "error message");
 
         }
