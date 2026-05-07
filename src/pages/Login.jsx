@@ -1,102 +1,3 @@
-// import React, { use, useState } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import api from "../config/service";
-
-// const Login = () => {
-
-//     const [email, setEmail] = useState("")
-//     const [password, setPassword] = useState("")
-
-//     const navigate = useNavigate()
-
-
-//     const handleLogin = async () => {
-//         console.log("kam kr rha hai");
-
-//         try {
-//             const res = await api.post('/loginUser', {
-//                 email,
-//                 password
-//             })
-
-
-//             localStorage.setItem("token", res.data.token)
-//             localStorage.setItem("role", res.data.logUser.role)
-//             localStorage.setItem("username", res.data.logUser.username)
-//             localStorage.setItem("email", res.data.logUser.email)
-//             localStorage.setItem("id", res.data.logUser._id)
-
-
-
-//             console.log(res.data, "login data aaya hai");
-
-//             alert("login success")
-//             const role = localStorage.getItem("role")
-
-//             if (role === 'admin') {
-//                 navigate('/admin')
-//             } else {
-//                 navigate('/home')
-//             }
-
-
-//         } catch (error) {
-//             console.log(error.message, "login error");
-//             const msg = error.response?.data?.message || 'something went wrong'
-//             console.log(msg, "error message");
-
-//         }
-//     }
-
-
-
-
-
-//     return (
-//         <>
-
-//             <div className=" flex py-23 justify-center bg-gradient-to-br from-black via-gray-900 to-gray-800">
-//                 <div className="bg-black/70 backdrop-blur-lg p-8 rounded-2xl shadow-xl w-[350px] border border-gray-700">
-
-//                     <h2 className="text-3xl font-bold text-white text-center mb-6">
-//                         Welcome Back
-//                     </h2>
-
-//                     <form className="space-y-4">
-//                         <input
-//                             onChange={(e) => setEmail(e.target.value)}
-//                             type="email"
-//                             placeholder="Email"
-//                             className="w-full p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-green-500"
-//                         />
-
-//                         <input
-//                             onChange={(e) => setPassword(e.target.value)}
-//                             type="password"
-//                             placeholder="Password"
-//                             className="w-full p-3 rounded-lg bg-gray-800 text-white outline-none focus:ring-2 focus:ring-green-500"
-//                         />
-
-//                         <button onClick={handleLogin} type="button" className="w-full bg-green-600 hover:bg-green-700 transition p-3 rounded-lg text-white font-semibold">
-//                             Login
-//                         </button>
-//                     </form>
-//                     <Link to={'/'}>
-//                         <p className="text-gray-400 text-sm text-center mt-4">
-//                             Don't have an account?{" "}
-//                             <span className="text-green-500 cursor-pointer">Signup</span>
-//                         </p>
-//                     </Link>
-//                 </div>
-//             </div>
-//         </>
-//     );
-// };
-
-// export default Login;
-
-
-
 import { useState, useEffect } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
@@ -124,11 +25,8 @@ export default function Login() {
         return () => window.removeEventListener("mousemove", handleMove);
     }, []);
 
-    const inputCls =
-        "w-full h-11 px-4 rounded-xl bg-black/20 border border-red-900/30 text-slate-100 placeholder:text-slate-400 outline-none transition-all focus:border-red-700/60 focus:ring-2 focus:ring-red-700/20 backdrop-blur-sm font-serif";
-
-    const labelCls =
-        "block text-sm font-medium text-slate-200 mb-1 ps-1.5 font-serif";
+    const inputCls = "w-full h-11 px-4 rounded-xl bg-black/20 border border-red-900/30 text-slate-100 placeholder:text-slate-400 outline-none transition-all focus:border-red-700/60 focus:ring-2 focus:ring-red-700/20 backdrop-blur-sm font-serif";
+    const labelCls = "block text-sm font-medium text-slate-200 mb-1 ps-1.5 font-serif";
 
     const handleLogin = async () => {
         try {
@@ -137,13 +35,29 @@ export default function Login() {
                 password,
             });
 
+            localStorage.setItem("token", res.data.token)
+            localStorage.setItem("role", res.data.logUser.role)
+            localStorage.setItem("username", res.data.logUser.username)
+            localStorage.setItem("email", res.data.logUser.email)
+            localStorage.setItem("id", res.data.logUser._id)
+
+            console.log(res.data, "login data aaya hai");
+
             toast.success("Login successful!");
 
-            setTimeout(() => {
-                navigate("/");
-            }, 1200);
+            const role = localStorage.getItem("role")
+            if (role === 'admin') {
+                setTimeout(() => {
+                    navigate('/admin')
+                }, 1200);
+            } else {
+                setTimeout(() => {
+                    navigate('/home')
+                }, 1200);
+            }
 
         } catch (error) {
+            console.log(error.message, "login error");
             const msg = error.response?.data?.message || "Login failed";
             toast.error(msg);
         }
