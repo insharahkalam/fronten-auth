@@ -1,29 +1,3 @@
-// import React, { useEffect } from 'react'
-// import Navbar from '../component/Navbar'
-// import { useNavigate } from 'react-router-dom'
-
-// const Home = () => {
-//     const navigate = useNavigate()
-//     const token = localStorage.getItem("token")
-
-//     useEffect(() => {
-//         if (!token) {
-//             alert("Unauthorized!")
-//             navigate('/login')
-//         }
-//     }, [token])
-//     return (
-//         <>
-//             <Navbar />
-
-//             <h1>THS IS HOME PAGE</h1>
-//         </>
-//     )
-// }
-
-// export default Home
-
-
 import React, { useEffect, useState } from 'react'
 import Navbar from '../component/Navbar'
 import { useNavigate } from 'react-router-dom'
@@ -33,14 +7,16 @@ const Home = () => {
 
     const navigate = useNavigate()
 
-    const username = localStorage.getItem("username")
-    const email = localStorage.getItem("email")
+    const [user, setUser] = useState({
+        username: localStorage.getItem("username"),
+        email: localStorage.getItem("email")
+    })
 
     const [openModal, setOpenModal] = useState(false)
 
     const [formData, setFormData] = useState({
-        username: username,
-        email: email,
+        username: user.username,
+        email: user.email,
         password: ''
     })
 
@@ -60,9 +36,15 @@ const Home = () => {
             const id = localStorage.getItem('id')
             const res = await api.put(`/updateUser/${id}`, formData)
             console.log(res, "ho gya upd");
-            alert('user updated success!')
+
             localStorage.setItem("username", res.data.updated.username)
             localStorage.setItem("email", res.data.updated.email)
+
+            setUser({
+                username: res.data.updated.username,
+                email: res.data.updated.email,
+            })
+            alert('user updated success!')
 
             setOpenModal(false)
 
@@ -94,7 +76,7 @@ const Home = () => {
                 </div>
 
                 <h1 className="text-2xl mt-6 font-bold text-gray-800">
-                    Welcome back <span className='text-red-700'>{username}</span>
+                    Welcome back <span className='text-red-700'>{user.username}</span>
                 </h1>
 
                 {/* Modal */}
