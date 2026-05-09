@@ -33,6 +33,7 @@ const Home = () => {
 
         try {
             const id = localStorage.getItem('id')
+    
             const res = await api.put(`/updateUser/${id}`, formData)
 
             console.log(res.data,"check updated data");
@@ -61,10 +62,7 @@ const Home = () => {
 
             console.log(res.data)
 
-            // token / user clear
-
             localStorage.clear()
-            sessionStorage.clear()
 
             toast.success("Logout successful")
 
