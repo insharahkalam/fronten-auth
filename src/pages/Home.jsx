@@ -35,6 +35,8 @@ const Home = () => {
             const id = localStorage.getItem('id')
             const res = await api.put(`/updateUser/${id}`, formData)
 
+            console.log(res.data,"check updated data");
+            
             localStorage.setItem("username", res.data.updated.username)
             localStorage.setItem("email", res.data.updated.email)
 
