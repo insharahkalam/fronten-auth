@@ -91,29 +91,34 @@ const Home = () => {
                 <div className="absolute bottom-0 right-0 h-96 w-96 bg-red-900/20 blur-3xl rounded-full" />
 
                 {/* Content */}
-                <div className="relative z-10 p-6">
+               
+
+                <div className="relative z-10 px-4 sm:px-6 py-6">
 
                     {/* Profile Card */}
-                    <div className="max-w-4xl mx-auto mt-10">
+                    <div className="max-w-3xl mx-auto mt-6 sm:mt-10">
 
-                        <div className="rounded-2xl border border-white/10 bg-white/[0.05] backdrop-blur-xl p-6 shadow-xl">
+                        <div className="rounded-2xl border border-white/10 bg-white/[0.05] backdrop-blur-xl p-4 sm:p-6 shadow-xl">
 
                             {/* Top Row */}
-                            <div className="flex items-center justify-between">
+                            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
 
                                 {/* Left side user info */}
-                                <div className="flex items-center gap-4">
+                                <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-center sm:text-left">
 
-                                    <div className="w-16 h-16 rounded-full bg-red-900/30 flex items-center justify-center">
+                                    <div className="w-16 h-16 mx-auto sm:mx-0 rounded-full bg-red-900/30 flex items-center justify-center shrink-0">
                                         <User className="text-red-300" />
                                     </div>
 
-                                    <div>
-                                        <h1 className="text-2xl font-bold">
-                                            Welcome, <span className="text-red-400">{user.username}</span>
+                                    <div className="break-all">
+                                        <h1 className="text-xl sm:text-2xl font-bold leading-tight">
+                                            Welcome,{" "}
+                                            <span className="text-red-400">
+                                                {user.username}
+                                            </span>
                                         </h1>
 
-                                        <div className="flex items-center gap-2 text-slate-400 mt-1">
+                                        <div className="flex items-center justify-center sm:justify-start gap-2 text-slate-400 mt-2 text-sm sm:text-base break-all">
                                             <Mail size={16} />
                                             {user.email}
                                         </div>
@@ -122,12 +127,12 @@ const Home = () => {
                                 </div>
 
                                 {/* Right side buttons */}
-                                <div className="flex items-center gap-3">
+                                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
 
                                     {/* Edit Button */}
                                     <button
                                         onClick={() => setOpenModal(true)}
-                                        className="flex items-center gap-2 px-8 py-2 rounded-lg  hover:scale-[1.03] transition-all shadow-lg shadow-red-900/30"
+                                        className="flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 rounded-lg hover:scale-[1.03] transition-all shadow-lg shadow-red-900/30 w-full sm:w-auto"
                                         style={{
                                             background:
                                                 "linear-gradient(90deg, #6b1414 0%, #111 40%, #111 60%, #6b1414 100%)",
@@ -140,7 +145,7 @@ const Home = () => {
                                     {/* Logout Button */}
                                     <button
                                         onClick={handleLogout}
-                                        className="flex items-center gap-2 px-8 py-2 rounded-lg  hover:scale-[1.03] transition-all shadow-lg shadow-red-900/30"
+                                        className="flex items-center justify-center gap-2 px-6 sm:px-8 py-2.5 rounded-lg hover:scale-[1.03] transition-all shadow-lg shadow-red-900/30 w-full sm:w-auto"
                                         style={{
                                             background:
                                                 "linear-gradient(90deg, #6b1414 0%, #111 40%, #111 60%, #6b1414 100%)",
@@ -155,7 +160,7 @@ const Home = () => {
                             {/* Dummy Text Section */}
                             <div className="mt-6 p-4 rounded-xl bg-black/20 border border-white/10">
 
-                                <p className="text-slate-300 text-sm leading-relaxed">
+                                <p className="text-slate-300 text-sm sm:text-base leading-relaxed text-center sm:text-left">
                                     All your personal information and account details are securely managed here.
                                     You can update your profile, change password, and manage settings anytime.
                                 </p>
@@ -165,6 +170,7 @@ const Home = () => {
                         </div>
                     </div>
                 </div>
+
 
                 {/* Modal */}
                 {openModal && (
