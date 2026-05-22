@@ -24,6 +24,7 @@ const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 const api = axios.create({
   baseURL: BASE_URL,
+  headers: { "Content-Type": "multipart/form-data" },
   withCredentials: true,
 });
 
@@ -32,21 +33,17 @@ export const adminLogin = (credentials) =>
   api.post("/auth/admin/login", credentials);
 
 // ─── USERS ─────────────────────────────────
-export const getAllUsers = () => api.get("/admin/users");
-export const getUserById = (id) => api.get(`/admin/users/${id}`);
-export const deleteUser = (id) => api.delete(`/admin/users/${id}`);
+export const getAllUsers = () => api.get("/auth/allUsers");
+export const getUserById = (id) => api.get(`/auth/getOne/${id}`);
+export const deleteUser = (id) => api.delete(`/auth/deleteUser/${id}`);
 
 // ─── PRODUCTS ──────────────────────────────
-export const getAllProducts = () => api.get("/products");
-export const getProductById = (id) => api.get(`/products/${id}`);
+export const getAllProducts = () => api.get("/products/getAllProduct");
+export const getProductById = (id) => api.get(`/products/getProduct/${id}`);
 export const addProduct = (formData) =>
-  api.post("/products", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  api.post("/products/create", formData);
 export const updateProduct = (id, formData) =>
-  api.put(`/products/${id}`, formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-  });
+  api.put(`/products/updated/${id}`, formData);
 export const deleteProduct = (id) => api.delete(`/products/${id}`);
 
 // ─── DASHBOARD ─────────────────────────────
