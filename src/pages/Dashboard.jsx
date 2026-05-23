@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
+import api from "../config/service";
+import axios from "axios";
 import {
   Users,
   Package,
@@ -10,8 +11,6 @@ import {
   Cpu,
   Server,
 } from "lucide-react";
-
-import { getAllUsers, getAllProducts } from "../config/service.js";
 
 export default function Dashboard() {
   const [stats, setStats] = useState({
@@ -27,8 +26,11 @@ export default function Dashboard() {
     try {
       setLoading(true);
 
-      const usersRes = await getAllUsers();
-      const productsRes = await getAllProducts();
+      const usersRes = await api.get('/auth/allUsers');
+      console.log(usersRes, "res user check");
+
+      const productsRes = await api.get('/products/getAllProduct');
+      console.log(productsRes, "res product check");
 
       const users = usersRes?.data.allUser || [];
       const products = productsRes?.data.getProduct || [];

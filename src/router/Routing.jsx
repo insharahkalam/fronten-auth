@@ -46,6 +46,7 @@ import Products from "../pages/Products";
 import Admin from "../pages/AddProduct";
 import Login from "../pages/Login";
 import Signup from "../pages/Signup";
+import Home from "../pages/Home";
 
 
 export default function App() {
@@ -53,14 +54,14 @@ export default function App() {
         <BrowserRouter>
 
             <Routes>
-                {/* <Route path="/" element={<Signup />} />
-                <Route path="/login" element={<Login />} /> */}
+                <Route path="/" element={<Signup />} />
+                <Route path="/login" element={<Login />} />
                 <Route element={<AdminLayout />}>
-                    <Route path="/" element={<Dashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/users" element={<Users />} />
                     <Route path="/add-product" element={<AddProduct />} />
                     <Route path="/products" element={<Products />} />
-
+                    <Route path="/home" element={<Home />} />
                 </Route>
             </Routes>
         </BrowserRouter>

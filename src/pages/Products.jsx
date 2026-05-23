@@ -10,7 +10,8 @@ import {
   ImageOff,
 } from "lucide-react";
 import toast from "react-hot-toast";
-import { getAllProducts, deleteProduct, updateProduct } from "../config/service.js"
+import axios from "axios";
+import api from "../config/service.js"
 import { Link } from "react-router-dom";
 
 const MOCK_PRODUCTS = [
@@ -87,7 +88,9 @@ export default function Products() {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const res = await getAllProducts();
+      const res = await api.get('/products/getAllProduct')
+      console.log(res, "products show res");
+
       setProducts(res.data.getProduct || []);
     } catch {
       setProducts(MOCK_PRODUCTS);
@@ -99,7 +102,9 @@ export default function Products() {
   const handleDelete = async (id) => {
     try {
       setDeletingId(id);
-      await deleteProduct(id);
+      const res = await api.delete(`/products/delete${id}`);
+      console.log(res, "delete res");
+
       setProducts((prev) => prev.filter((p) => p._id !== id));
       toast.success("Product deleted");
     } catch {
@@ -136,7 +141,9 @@ export default function Products() {
     try {
       const formData = new FormData();
       Object.entries(editForm).forEach(([k, v]) => formData.append(k, v));
-      await updateProduct(id, formData);
+      const res = await api.put(`/products/update/${id}`, formData);
+      console.log(res, "update res");
+
       setProducts((prev) =>
         prev.map((p) =>
           p._id === id ? { ...p, ...editForm } : p

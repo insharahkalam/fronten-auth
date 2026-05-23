@@ -48,7 +48,7 @@ export default function Login() {
             const role = localStorage.getItem("role")
             if (role === 'admin') {
                 setTimeout(() => {
-                    navigate('/admin')
+                    navigate('/dashboard')
                 }, 1200);
             } else {
                 setTimeout(() => {

@@ -1,7 +1,8 @@
 import { useState, useRef } from "react";
 import { PlusSquare, Upload, X, ImageOff, CheckCircle, Package, Tag, DollarSign, Layers, Star, BarChart2, Percent, Eye } from "lucide-react";
 import toast from "react-hot-toast";
-import { addProduct } from "../config/service.js";
+import api from "../config/service.js";
+import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 /* ─── INLINE STYLES (scoped via className prefix ap-) ─── */
@@ -584,7 +585,13 @@ export default function AddProduct() {
         if (image) formData.append("image", image);
         try {
             setLoading(true);
-            await addProduct(formData);
+            const res = await api.post("/products/create", formData, {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            });
+            console.log(res, "product res");
+
             toast.success("Product added successfully!");
             setSuccess(true);
             setForm(INITIAL_FORM);
