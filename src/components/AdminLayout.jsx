@@ -102,11 +102,7 @@ export default function AdminLayout() {
                 {/* Footer */}
                 <div className="sidebar-footer">
                     <div className="sidebar-footer-info">
-                        <div className="avatar">A</div>
-                        <div className="avatar-info">
-                            <p>Admin User</p>
-                            <span>Super Admin</span>
-                        </div>
+                            <p>Logout</p>
                     </div>
                 </div>
             </aside>

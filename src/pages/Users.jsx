@@ -3,15 +3,6 @@ import { Users as UsersIcon, Search, Trash2, UserX, Shield, User } from "lucide-
 import toast from "react-hot-toast";
 import { getAllUsers, getUserById, deleteUser } from "../config/service.js";
 
-// Mock users for demo
-const MOCK_USERS = [
-  { _id: "usr_001abc", name: "Alice Carter", email: "alice@example.com", role: "user", createdAt: "2024-11-02" },
-  { _id: "usr_002def", name: "Bob Martinez", email: "bob@example.com", role: "admin", createdAt: "2024-09-15" },
-  { _id: "usr_003ghi", name: "Carol Nguyen", email: "carol@example.com", role: "user", createdAt: "2025-01-08" },
-  { _id: "usr_004jkl", name: "David Kim", email: "david@example.com", role: "user", createdAt: "2025-02-20" },
-  { _id: "usr_005mno", name: "Eva Petrov", email: "eva@example.com", role: "user", createdAt: "2025-03-01" },
-  { _id: "usr_006pqr", name: "Frank Osei", email: "frank@example.com", role: "user", createdAt: "2025-04-18" },
-];
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -30,10 +21,12 @@ export default function Users() {
     try {
       setLoading(true);
       const res = await getAllUsers();
-      setUsers(res.data || []);
-    } catch {
-      // Use mock data if API not ready
-      setUsers(MOCK_USERS);
+      console.log(res.data, "user chsrck");
+
+      setUsers(res.data.allUser || []);
+    } catch (error) {
+      console.log(error);
+
     } finally {
       setLoading(false);
     }
@@ -44,11 +37,6 @@ export default function Users() {
     if (!searchId.trim()) return;
     try {
       setSearching(true);
-      setSearchResult(null);
-      const res = await getUserById(searchId.trim());
-      setSearchResult(res.data);
-    } catch {
-      // Mock search from local list
       const found = users.find(
         (u) => u._id === searchId.trim() || u.email === searchId.trim()
       );
@@ -58,6 +46,8 @@ export default function Users() {
         toast.error("User not found");
         setSearchResult(null);
       }
+    } catch (error) {
+      console.log(error, "finfing error");
     } finally {
       setSearching(false);
     }
@@ -196,59 +186,35 @@ export default function Users() {
             <table>
               <thead>
                 <tr>
-                  <th>User</th>
+
+                  <th>S.NO </th>
                   <th>ID</th>
+                  <th>Username</th>
                   <th>Email</th>
                   <th>Role</th>
-                  <th>Joined</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {displayUsers.map((user) => (
+                {displayUsers.map((user, ind) => (
                   <tr key={user._id}>
-                    <td>
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: 10,
-                        }}
-                      >
-                        <div
-                          className="avatar"
-                          style={{
-                            width: 32,
-                            height: 32,
-                            fontSize: 12,
-                            borderRadius: 6,
-                          }}
-                        >
-                          {user.name?.[0]?.toUpperCase() || "U"}
-                        </div>
-                        <span style={{ fontWeight: 600 }}>
-                          {user.name || "—"}
-                        </span>
-                      </div>
-                    </td>
+                    <td>{ind + 1 + ":"}</td>
                     <td className="td-mono">
-                      {user._id?.slice(0, 12)}…
+                      {user._id}
+                    </td>
+                    <td >
+                      {user.username}
                     </td>
                     <td>{user.email}</td>
                     <td>
                       <span
-                        className={`badge ${
-                          user.role === "admin" ? "badge-red" : "badge-blue"
-                        }`}
+                        className={`badge ${user.role === "admin" ? "badge-red" : "badge-blue"
+                          }`}
                       >
                         {user.role || "user"}
                       </span>
                     </td>
-                    <td className="td-mono">
-                      {user.createdAt
-                        ? new Date(user.createdAt).toLocaleDateString()
-                        : "—"}
-                    </td>
+
                     <td>
                       {confirmDelete === user._id ? (
                         <div style={{ display: "flex", gap: 6 }}>

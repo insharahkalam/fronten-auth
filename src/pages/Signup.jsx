@@ -38,7 +38,7 @@ export default function Signup() {
         console.log("data aarha hai", username, email, password, role);
 
         try {
-            const res = await api.post('/users', {
+            const res = await api.post('/auth/users', {
                 username,
                 email,
                 password,

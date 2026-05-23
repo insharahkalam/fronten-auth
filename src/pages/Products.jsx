@@ -88,7 +88,7 @@ export default function Products() {
     try {
       setLoading(true);
       const res = await getAllProducts();
-      setProducts(res.data || []);
+      setProducts(res.data.getProduct || []);
     } catch {
       setProducts(MOCK_PRODUCTS);
     } finally {
@@ -296,6 +296,8 @@ export default function Products() {
               </thead>
               <tbody>
                 {filtered.map((product) => {
+                  console.log(product);
+
                   const isEditing = editingId === product._id;
                   return (
                     <tr key={product._id}>
@@ -308,9 +310,9 @@ export default function Products() {
                             gap: 12,
                           }}
                         >
-                          {product.imageUrl ? (
+                          {product.image ? (
                             <img
-                              src={product.imageUrl}
+                              src={product.image}
                               alt={product.title}
                               className="product-thumb"
                             />
@@ -430,8 +432,8 @@ export default function Products() {
                                 (product.stock || 0) === 0
                                   ? "var(--red-primary)"
                                   : (product.stock || 0) < 10
-                                  ? "#f59e0b"
-                                  : "#4ade80",
+                                    ? "#f59e0b"
+                                    : "#4ade80",
                               fontWeight: 600,
                               fontSize: 14,
                             }}
