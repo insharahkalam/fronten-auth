@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
-import api from "../config/service.js"
+import api from "../config/service";
 import { Link } from "react-router-dom";
 
 
@@ -471,7 +471,7 @@ export default function Products() {
                               Edit
                             </button>
                             <button
-                              className="btn btn-danger "
+                            className="btn btn-danger "
                               onClick={() => setConfirmDelete(product._id)}
                               title="Delete product"
                             >

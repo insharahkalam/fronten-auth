@@ -61,8 +61,8 @@ export default function App() {
                     <Route path="/users" element={<Users />} />
                     <Route path="/add-product" element={<AddProduct />} />
                     <Route path="/products" element={<Products />} />
-                    <Route path="/home" element={<Home />} />
                 </Route>
+                    <Route path="/home" element={<Home />} />
             </Routes>
         </BrowserRouter>
     );

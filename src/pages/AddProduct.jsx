@@ -1,7 +1,7 @@
 import { useState, useRef } from "react";
 import { PlusSquare, Upload, X, ImageOff, CheckCircle, Package, Tag, DollarSign, Layers, Star, BarChart2, Percent, Eye } from "lucide-react";
 import toast from "react-hot-toast";
-import api from "../config/service.js";
+import api from "../config/service";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
@@ -590,7 +590,7 @@ export default function AddProduct() {
                     "Content-Type": "multipart/form-data",
                 },
             });
-            console.log(res, "product res");
+            console.log(res, "add product res");
 
             toast.success("Product added successfully!");
             setSuccess(true);
