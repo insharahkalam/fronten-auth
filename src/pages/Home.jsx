@@ -33,11 +33,11 @@ const Home = () => {
 
         try {
             const id = localStorage.getItem('id')
-    
+
             const res = await api.put(`/updateUser/${id}`, formData)
 
-            console.log(res.data,"check updated data");
-            
+            console.log(res.data, "check updated data");
+
             localStorage.setItem("username", res.data.updated.username)
             localStorage.setItem("email", res.data.updated.email)
 
@@ -91,7 +91,7 @@ const Home = () => {
                 <div className="absolute bottom-0 right-0 h-96 w-96 bg-red-900/20 blur-3xl rounded-full" />
 
                 {/* Content */}
-               
+
 
                 <div className="relative z-10 px-4 sm:px-6 py-6">
 

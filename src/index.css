@@ -378,7 +378,7 @@ body::after {
 }
 
 .stat-card {
-  padding: 22px;
+  padding: 27px 20px;
   border-radius: 16px;
   background: var(--bg-card);
   backdrop-filter: var(--glass-blur);
@@ -568,7 +568,7 @@ tbody td:first-child { color: var(--text-primary); }
 }
 
 .btn-sm {
-  padding: 6px 12px;
+  padding: 12px 12px;
   font-size: 12px;
 }
 

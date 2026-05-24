@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 import {
     LayoutDashboard,
     Users,
@@ -10,8 +10,10 @@ import {
     Zap,
     Shield,
     Bell,
+    LogOut
 } from "lucide-react";
-
+import api from "../config/service";
+import toast from 'react-hot-toast'
 const navLinks = [
     {
         to: "/dashboard",
@@ -33,6 +35,7 @@ const navLinks = [
         label: "Products",
         icon: Package,
     },
+
 ];
 
 const pageTitles = {
@@ -47,6 +50,30 @@ export default function AdminLayout() {
     const location = useLocation();
     const currentTitle = pageTitles[location.pathname] || "Admin";
     const closeSidebar = () => setSidebarOpen(false);
+
+    const navigate = useNavigate()
+
+    const handleLogout = async () => {
+        try {
+            const res = await api.get('/auth/logout')
+            console.log(res.data)
+            localStorage.clear()
+            toast.success("Logout successful")
+
+            // redirect to login
+            setTimeout(() => {
+                navigate('/login');
+            }, 800);
+
+        } catch (error) {
+            console.log(error)
+
+            const msg = error.response?.data?.message || "Logout failed"
+            toast.error(msg)
+        }
+    }
+
+
 
     return (
         <div className="admin-layout">
@@ -88,23 +115,20 @@ export default function AdminLayout() {
                     ))}
 
                     <div className="nav-section-label" style={{ marginTop: 20 }}>
-                        Security
+                        Session
                     </div>
-                    <div
+                    <div onClick={handleLogout}
                         className="nav-link"
                         style={{ cursor: "default", opacity: 0.5 }}
                     >
-                        <Shield className="nav-icon" />
-                        Permissions
+                        <LogOut className="nav-icon" />
+                        Logout
                     </div>
+
+
                 </nav>
 
-                {/* Footer */}
-                <div className="sidebar-footer">
-                    <div className="sidebar-footer-info">
-                            <p>Logout</p>
-                    </div>
-                </div>
+
             </aside>
 
             {/* MAIN CONTENT */}

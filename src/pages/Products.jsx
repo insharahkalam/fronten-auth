@@ -8,69 +8,13 @@ import {
   Save,
   Star,
   ImageOff,
+  Bold,
 } from "lucide-react";
 import toast from "react-hot-toast";
 import axios from "axios";
 import api from "../config/service.js"
 import { Link } from "react-router-dom";
 
-const MOCK_PRODUCTS = [
-  {
-    _id: "prd_001",
-    title: "Wireless Noise-Cancelling Headphones",
-    price: 249.99,
-    category: "Electronics",
-    brand: "SoundMax",
-    stock: 34,
-    discount: 10,
-    featured: true,
-    imageUrl: null,
-  },
-  {
-    _id: "prd_002",
-    title: "Premium Running Shoes",
-    price: 129.99,
-    category: "Footwear",
-    brand: "SwiftStep",
-    stock: 0,
-    discount: 0,
-    featured: false,
-    imageUrl: null,
-  },
-  {
-    _id: "prd_003",
-    title: "Ergonomic Office Chair",
-    price: 499.0,
-    category: "Home & Living",
-    brand: "ComfortPro",
-    stock: 12,
-    discount: 15,
-    featured: true,
-    imageUrl: null,
-  },
-  {
-    _id: "prd_004",
-    title: "Mechanical Gaming Keyboard",
-    price: 89.99,
-    category: "Electronics",
-    brand: "ByteKey",
-    stock: 58,
-    discount: 5,
-    featured: false,
-    imageUrl: null,
-  },
-  {
-    _id: "prd_005",
-    title: "Vitamin C Serum 30ml",
-    price: 34.95,
-    category: "Beauty",
-    brand: "GlowLab",
-    stock: 200,
-    discount: 0,
-    featured: false,
-    imageUrl: null,
-  },
-];
 
 export default function Products() {
   const [products, setProducts] = useState([]);
@@ -90,10 +34,9 @@ export default function Products() {
       setLoading(true);
       const res = await api.get('/products/getAllProduct')
       console.log(res, "products show res");
-
-      setProducts(res.data.getProduct || []);
-    } catch {
-      setProducts(MOCK_PRODUCTS);
+      setProducts(res.data.getProduct);
+    } catch (error) {
+      console.log(error, "fetch product error");
     } finally {
       setLoading(false);
     }
@@ -102,14 +45,13 @@ export default function Products() {
   const handleDelete = async (id) => {
     try {
       setDeletingId(id);
-      const res = await api.delete(`/products/delete${id}`);
+      const res = await api.delete(`/products/delete/${id}`);
       console.log(res, "delete res");
+      setProducts((prev) => prev.filter((p) => p._id !== id));
+      toast.success("Product deleted");
+    } catch (error) {
+      console.log(error, "product deleted error");
 
-      setProducts((prev) => prev.filter((p) => p._id !== id));
-      toast.success("Product deleted");
-    } catch {
-      setProducts((prev) => prev.filter((p) => p._id !== id));
-      toast.success("Product deleted");
     } finally {
       setDeletingId(null);
       setConfirmDelete(null);
@@ -205,18 +147,15 @@ export default function Products() {
             label: "Out of Stock",
             value: products.filter((p) => (p.stock || 0) === 0).length,
           },
-          {
-            label: "Inventory Value",
-            value: `$${totalValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}`,
-          },
         ].map(({ label, value }) => (
           <div className="stat-card" key={label} style={{ flex: "1 1 160px" }}>
             <div className="stat-info" style={{ paddingLeft: 8 }}>
-              <p>{label}</p>
+              <p style={{ fontSize: 15, fontFamily: 'serif' }}>{label}</p>
               <h3
                 style={{
-                  fontSize: typeof value === "string" ? 18 : 24,
+                  fontSize: 30,
                   marginTop: 4,
+                  fontFamily: 'serif'
                 }}
               >
                 {value}
@@ -285,7 +224,7 @@ export default function Products() {
               <Package size={48} />
               <p>No products found</p>
               <Link to="/add-product" className="btn btn-primary btn-sm" style={{ marginTop: 8 }}>
-                Add your first product
+                Add products
               </Link>
             </div>
           ) : (
@@ -410,7 +349,7 @@ export default function Products() {
                         ) : (
                           <span
                             style={{
-                              fontFamily: "'Orbitron', monospace",
+                              fontFamily: "serif",
                               fontSize: 14,
                               color: "#fff",
                             }}
@@ -524,7 +463,7 @@ export default function Products() {
                         ) : (
                           <div style={{ display: "flex", gap: 6 }}>
                             <button
-                              className="btn btn-edit btn-sm"
+                              className="btn btn-edit "
                               onClick={() => startEdit(product)}
                               title="Edit product"
                             >
@@ -532,7 +471,7 @@ export default function Products() {
                               Edit
                             </button>
                             <button
-                              className="btn btn-danger btn-sm"
+                              className="btn btn-danger "
                               onClick={() => setConfirmDelete(product._id)}
                               title="Delete product"
                             >

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Users as UsersIcon, Search, Trash2, UserX, Shield, User } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../config/service";
+import axios from "axios";
 
 export default function Users() {
   const [users, setUsers] = useState([]);
@@ -60,7 +61,7 @@ export default function Users() {
   const handleDelete = async (id) => {
     try {
       setDeletingId(id);
-      const res = await deleteUser(`/auth/deleteUser/${id}`);
+      const res = await api.delete(`/auth/deleteUser/${id}`);
       setUsers((prev) => prev.filter((u) => u._id !== id));
       if (searchResult?._id === id) setSearchResult(null);
       toast.success("User deleted successfully");
