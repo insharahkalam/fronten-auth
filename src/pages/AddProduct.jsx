@@ -1060,17 +1060,14 @@ import {
 
 /* ── Stub these out with your real imports ── */
 const toast = { success: (m) => alert(m), error: (m) => alert(m) };
-const api   = { post: async () => ({}) };
-const useNavigate = () => () => {};
+const api = { post: async () => ({}) };
+const useNavigate = () => () => { };
 
-const CATEGORIES = [
-  "Electronics","Clothing","Footwear","Home & Living",
-  "Beauty","Sports","Books","Toys","Automotive","Other",
-];
+const CATEGORIES = ["Electronics", "Mobile & Accessories", "Fashion (Men)", "Fashion (Women)", "Footwear", "Home & Living", "Beauty & Personal Care", "Health & Wellness", "Sports & Fitness", "Books & Stationery", "Kids & Toys", "Grocery", "Automotive", "Furniture", "Kitchen & Dining", "Other"];
 
 const INITIAL = {
-  title:"", description:"", price:"", category:"",
-  brand:"", stock:"", discount:"", featured: false,
+  title: "", description: "", price: "", category: "",
+  brand: "", stock: "", discount: "", featured: false,
 };
 
 function Label({ children, required }) {
@@ -1112,14 +1109,14 @@ function CardHead({ icon: Icon, title, sub }) {
 }
 
 export default function AddProduct() {
-  const [form, setForm]         = useState(INITIAL);
-  const [image, setImage]       = useState(null);
-  const [preview, setPreview]   = useState(null);
-  const [loading, setLoading]   = useState(false);
+  const [form, setForm] = useState(INITIAL);
+  const [image, setImage] = useState(null);
+  const [preview, setPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [dragOver, setDragOver] = useState(false);
-  const [success, setSuccess]   = useState(false);
-  const fileRef                 = useRef();
-  const navigate                = useNavigate();
+  const [success, setSuccess] = useState(false);
+  const fileRef = useRef();
+  const navigate = useNavigate();
 
   const handle = (e) => {
     const { name, value, type, checked } = e.target;
@@ -1150,7 +1147,7 @@ export default function AddProduct() {
     if (image) fd.append("image", image);
     try {
       setLoading(true);
-      await api.post("/products/create", fd, { headers: { "Content-Type": "multipart/form-data" }});
+      await api.post("/products/create", fd, { headers: { "Content-Type": "multipart/form-data" } });
       toast.success("Product added successfully!");
       setSuccess(true); setForm(INITIAL); removeImage();
       setTimeout(() => setSuccess(false), 3000);
@@ -1215,7 +1212,7 @@ export default function AddProduct() {
 
         {/* ── Form ── */}
         <form onSubmit={handleSubmit}>
-          <div className="grid gap-5 items-start" style={{gridTemplateColumns:"1fr 340px"}}>
+          <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-5 items-start">
 
             {/* LEFT COLUMN */}
             <div className="flex flex-col gap-4">
