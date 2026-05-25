@@ -144,7 +144,7 @@ export default function Products() {
       </div>
 
       {/* ── Stat Cards ── */}
-      <div className="flex gap-3.5 mb-6 flex-wrap">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5 mb-6 ">
         {[
           { label: "Total Products", value: products.length },
           { label: "In Stock", value: products.filter(p => (p.stock || 0) > 0).length },

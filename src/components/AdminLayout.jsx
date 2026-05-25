@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { LayoutDashboard, Users, Package, PlusSquare, Menu, X, Zap, Bell, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Package, PlusSquare, ShoppingBag, Menu, X, Zap, Bell, LogOut } from "lucide-react";
 import api from "../config/service";
 import toast from "react-hot-toast";
 
@@ -9,6 +9,7 @@ const navLinks = [
   { to: "/users", label: "Users", icon: Users },
   { to: "/add-product", label: "Add Product", icon: PlusSquare },
   { to: "/products", label: "Products", icon: Package },
+  { to: "/orders", label: "Orders", icon: ShoppingBag },
 ];
 
 const pageTitles = {
@@ -109,7 +110,7 @@ export default function AdminLayout() {
                 to={to}
                 onClick={closeSidebar}
                 className={({ isActive }) => `
-                  relative flex items-center gap-3 px-3.5 py-2.5 rounded-[10px] mb-0.5
+                  relative flex items-center gap-3 px-3.5 py-2.5 rounded-[10px] mb-1.5
                   text-[14px] font-medium tracking-[0.04em] no-underline
                   transition-all duration-200 overflow-hidden group
                   ${isActive
@@ -140,7 +141,7 @@ export default function AdminLayout() {
             ))}
 
             {/* Session section */}
-            <p className="text-[10px] tracking-[0.2em] text-white/25 uppercase px-3 mt-5 mb-1.5 pb-1">
+            <p className="text-[10px] tracking-[0.2em] text-white/25 uppercase px-3 mt-10 md:mt-30 mb-1.5 pb-1">
               Session
             </p>
 
