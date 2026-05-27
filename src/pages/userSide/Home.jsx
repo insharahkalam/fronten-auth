@@ -251,28 +251,33 @@ import ProductCard from '../../components/ProductCard'
 import { GridSkeleton } from '../../components/Skeleton'
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
+import {
+    Laptop, Smartphone, Shirt, Footprints, Home as HomeIcon,
+    Sparkles as SparklesIcon, Leaf, Dumbbell, BookOpen, ToyBrick,
+    ShoppingBasket, Car, Armchair, UtensilsCrossed, Package as PackageIcon,
+    ShoppingBag, ArrowUpRight, Flame
+} from 'lucide-react'
 
-/* ─────────────────────────────────────────
-   DATA
-───────────────────────────────────────── */
 const CATEGORIES = [
-    { name: 'Electronics', icon: '💻', count: '4.2K' },
-    { name: 'Mobile & Accessories', icon: '📱', count: '3.8K' },
-    { name: 'Fashion (Men)', icon: '👔', count: '5.1K' },
-    { name: 'Fashion (Women)', icon: '👗', count: '6.4K' },
-    { name: 'Footwear', icon: '👟', count: '2.9K' },
-    { name: 'Home & Living', icon: '🏠', count: '3.3K' },
-    { name: 'Beauty & Personal Care', icon: '💄', count: '2.1K' },
-    { name: 'Health & Wellness', icon: '🌿', count: '1.7K' },
-    { name: 'Sports & Fitness', icon: '🏋️', count: '2.4K' },
-    { name: 'Books & Stationery', icon: '📚', count: '4.8K' },
-    { name: 'Kids & Toys', icon: '🧸', count: '1.9K' },
-    { name: 'Grocery', icon: '🛒', count: '3.0K' },
-    { name: 'Automotive', icon: '🚗', count: '1.2K' },
-    { name: 'Furniture', icon: '🪑', count: '0.9K' },
-    { name: 'Kitchen & Dining', icon: '🍳', count: '2.6K' },
-    { name: 'Other', icon: '✦', count: '3.7K' },
+    { name: 'Electronics', icon: Laptop, count: '4.2K', hot: true },
+    { name: 'Mobile & Accessories', icon: Smartphone, count: '3.8K' },
+    { name: 'Fashion (Men)', icon: Shirt, count: '5.1K' },
+    { name: 'Fashion (Women)', icon: ShoppingBag, count: '6.4K', hot: true },
+    { name: 'Footwear', icon: Footprints, count: '2.9K' },
+    { name: 'Home & Living', icon: HomeIcon, count: '3.3K' },
+    { name: 'Beauty & Personal Care', icon: SparklesIcon, count: '2.1K' },
+    { name: 'Health & Wellness', icon: Leaf, count: '1.7K' },
+    { name: 'Sports & Fitness', icon: Dumbbell, count: '2.4K' },
+    { name: 'Books & Stationery', icon: BookOpen, count: '4.8K' },
+    { name: 'Kids & Toys', icon: ToyBrick, count: '1.9K' },
+    { name: 'Grocery', icon: ShoppingBasket, count: '3.0K' },
+    { name: 'Automotive', icon: Car, count: '1.2K' },
+    { name: 'Furniture', icon: Armchair, count: '0.9K' },
+    { name: 'Kitchen & Dining', icon: UtensilsCrossed, count: '2.6K' },
+    { name: 'Other', icon: PackageIcon, count: '3.7K' },
 ]
+
+
 
 const FEATURES = [
     { icon: Truck, title: 'Free Delivery', desc: 'On all orders above Rs. 2,000', meta: '01' },
@@ -561,51 +566,140 @@ export default function Home() {
                 </div>
             </div>
 
-            {/* ════════════════════════════════════════
-          CATEGORIES
-      ════════════════════════════════════════ */}
-            <section className="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-20 sm:py-28">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-12 sm:mb-16">
-                    <div>
-                        <SectionEyebrow icon={LayoutGrid} text="Browse by Category" code="01" />
-                        <SectionHeading>Shop by Category.</SectionHeading>
-                        <p className="text-[14px] text-white/45 mt-4 tracking-wide max-w-md">
-                            From everyday essentials to premium picks — find exactly what
-                            you're looking for across our 16 curated departments.
+
+            {/* CATEGORIES — premium */}
+            <section className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 sm:py-32">
+                {/* Ambient backdrop */}
+                <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden">
+                    <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-red-600/[0.06] blur-[120px] rounded-full" />
+                    <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-orange-500/[0.04] blur-[120px] rounded-full" />
+                </div>
+
+                {/* Header */}
+                <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
+                    <div className="max-w-2xl">
+                        <SectionEyebrow icon={LayoutGrid} text="Categories" code="02" />
+                        <h2 className="mt-5 text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-[1.05]">
+                            Shop by <span className="italic font-light text-white/60">category.</span>
+                        </h2>
+                        <p className="mt-5 text-white/55 text-base sm:text-lg leading-relaxed max-w-xl">
+                            16 curated departments. 50,000+ products. One unmistakable standard.
                         </p>
                     </div>
-                    <Link to="/shop"
-                        className="group inline-flex items-center gap-1.5 no-underline shrink-0
-              font-['Orbitron',monospace] text-[10px] tracking-[0.22em] uppercase
-              text-white/40 hover:text-red-400 transition-colors duration-200 self-start sm:self-auto">
-                        Browse All <ChevronRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+
+                    <Link
+                        to="/shop"
+                        className="group inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white hover:text-black hover:border-white transition-all duration-300 text-sm font-medium text-white/80 self-start md:self-end backdrop-blur-sm"
+                    >
+                        Browse all categories
+                        <span className="w-7 h-7 rounded-full bg-red-600 group-hover:bg-black flex items-center justify-center transition-colors">
+                            <ArrowUpRight className="w-3.5 h-3.5 text-white group-hover:text-white transition-transform group-hover:rotate-45" />
+                        </span>
                     </Link>
                 </div>
 
-                <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-3 sm:gap-4">
-                    {CATEGORIES.map((cat) => (
-                        <button key={cat.name}
-                            onClick={() => navigate(`/shop?category=${encodeURIComponent(cat.name)}`)}
-                            className="group relative bg-white/[0.025] border border-white/[0.07] rounded-2xl
-                p-4 sm:p-5 flex flex-col items-center gap-2.5 text-center
-                hover:bg-red-600/[0.07] hover:border-red-600/35
-                hover:shadow-[0_4px_28px_rgba(220,38,38,0.12)]
-                active:scale-[0.97] transition-all duration-200 hover:-translate-y-1">
-                            <span className="text-3xl sm:text-[34px] leading-none
-                transition-transform duration-300 group-hover:scale-110">
-                                {cat.icon}
-                            </span>
-                            <span className="text-[11px] sm:text-[12px] font-semibold tracking-wide
-                leading-tight text-white/55 group-hover:text-white transition-colors duration-200">
-                                {cat.name}
-                            </span>
-                            <span className="font-['Orbitron',monospace] text-[8.5px] tracking-[0.18em] uppercase text-white/25 group-hover:text-red-400/80 transition-colors">
-                                {cat.count} items
-                            </span>
-                        </button>
-                    ))}
+                {/* Grid — bento with featured tile */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
+                    {CATEGORIES.map((cat, i) => {
+                        const Icon = cat.icon
+                        const idx = String(i + 1).padStart(2, '0')
+                        return (
+                            <button
+                                key={cat.name}
+                                onClick={() => navigate(`/shop?category=${encodeURIComponent(cat.name)}`)}
+                                className="group relative overflow-hidden rounded-3xl border border-white/[0.08]
+                           bg-gradient-to-br from-white/[0.04] to-white/[0.01]
+                           hover:border-red-500/40
+                           transition-all duration-500 text-left
+                           h-[220px] sm:h-[240px] flex"
+                            >
+                                {/* Animated gradient sheen */}
+                                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500
+                                 bg-[radial-gradient(circle_at_top_left,rgba(220,38,38,0.18),transparent_60%)]" />
+
+                                {/* Diagonal shimmer on hover */}
+                                <span className="absolute -inset-x-10 -top-10 h-32 rotate-12
+                                 bg-gradient-to-r from-transparent via-white/[0.06] to-transparent
+                                 translate-x-[-120%] group-hover:translate-x-[120%] transition-transform duration-1000 ease-out" />
+
+                                {/* Dotted texture */}
+                                <span className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(circle,white_1px,transparent_1px)] [background-size:14px_14px]" />
+
+                                {/* Content */}
+                                <div className="relative h-full w-full flex flex-col p-5 sm:p-6">
+                                    {/* Top row */}
+                                    <div className="flex items-start justify-between">
+                                        <div className="relative w-12 h-12 rounded-2xl
+                                        bg-gradient-to-br from-white/[0.08] to-white/[0.02]
+                                        border border-white/[0.08]
+                                        flex items-center justify-center
+                                        text-white/90 group-hover:text-white
+                                        group-hover:from-red-600 group-hover:to-red-700
+                                        group-hover:border-red-400/50
+                                        group-hover:shadow-[0_8px_30px_-8px_rgba(220,38,38,0.6)]
+                                        transition-all duration-500 shrink-0">
+                                            <Icon className="w-5 h-5" strokeWidth={1.5} />
+                                        </div>
+
+                                        <div className="flex items-center gap-2">
+                                            {cat.hot && (
+                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full
+                                                 bg-red-500/10 border border-red-500/30 text-[10px] font-semibold
+                                                 uppercase tracking-wider text-red-300">
+                                                    <Flame className="w-3 h-3" /> Hot
+                                                </span>
+                                            )}
+                                            <span className="text-[10px] font-mono text-white/30 tracking-widest">
+                                                / {idx}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom */}
+                                    <div className="mt-auto pt-6">
+                                        <h3 className="font-semibold text-white tracking-tight leading-tight text-base sm:text-[17px] line-clamp-1">
+                                            {cat.name}
+                                        </h3>
+
+                                        <div className="mt-3 flex items-center justify-between">
+                                            <span className="inline-flex items-center gap-2 text-xs text-white/45">
+                                                <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                                                {cat.count} items
+                                            </span>
+
+                                            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50
+                                             group-hover:text-red-300 transition-colors">
+                                                <ArrowUpRight className="w-3.5 h-3.5 transition-transform
+                                                         group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Bottom accent bar */}
+                                    <span className="absolute left-0 bottom-0 h-[2px] w-0
+                                     bg-gradient-to-r from-red-500 via-red-400 to-orange-400
+                                     group-hover:w-full transition-all duration-700 ease-out" />
+                                </div>
+                            </button>
+                        )
+                    })}
+                </div>
+
+
+                {/* Footer micro-strip */}
+                <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/40">
+                    <span className="inline-flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-red-500" /> 50,000+ products
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-red-500" /> 16 departments
+                    </span>
+                    <span className="inline-flex items-center gap-2">
+                        <span className="w-1 h-1 rounded-full bg-red-500" /> Updated daily
+                    </span>
                 </div>
             </section>
+
 
             {/* ════════════════════════════════════════
           FEATURED PRODUCTS
