@@ -259,10 +259,10 @@ import {
 } from 'lucide-react'
 
 const CATEGORIES = [
-    { name: 'Electronics', icon: Laptop, count: '4.2K', hot: true },
+    { name: 'Electronics', icon: Laptop, count: '4.2K' },
     { name: 'Mobile & Accessories', icon: Smartphone, count: '3.8K' },
     { name: 'Fashion (Men)', icon: Shirt, count: '5.1K' },
-    { name: 'Fashion (Women)', icon: ShoppingBag, count: '6.4K', hot: true },
+    { name: 'Fashion (Women)', icon: ShoppingBag, count: '6.4K' },
     { name: 'Footwear', icon: Footprints, count: '2.9K' },
     { name: 'Home & Living', icon: HomeIcon, count: '3.3K' },
     { name: 'Beauty & Personal Care', icon: SparklesIcon, count: '2.1K' },
@@ -575,28 +575,31 @@ export default function Home() {
                     <div className="absolute bottom-0 right-1/4 w-[400px] h-[400px] bg-orange-500/[0.04] blur-[120px] rounded-full" />
                 </div>
 
+
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
                     <div className="max-w-2xl">
                         <SectionEyebrow icon={LayoutGrid} text="Categories" code="02" />
-                        <h2 className="mt-5 text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-white leading-[1.05]">
-                            Shop by <span className="italic font-light text-white/60">category.</span>
+                        <h2 className="mt-5 font-['Orbitron',monospace] text-4xl sm:text-5xl md:text-5xl font-black tracking-tight text-white leading-[1.05]">
+                            Shop by category
                         </h2>
-                        <p className="mt-5 text-white/55 text-base sm:text-lg leading-relaxed max-w-xl">
+                        <p className="mt-5 text-white/55 text-base leading-relaxed max-w-xl">
                             16 curated departments. 50,000+ products. One unmistakable standard.
                         </p>
                     </div>
 
                     <Link
                         to="/shop"
-                        className="group inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] hover:bg-white hover:text-black hover:border-white transition-all duration-300 text-sm font-medium text-white/80 self-start md:self-end backdrop-blur-sm"
+                        className="group inline-flex items-center gap-3 px-5 py-3 rounded-full border border-white/10 bg-white/[0.03] hover:bg-black/40 hover:text-white hover:border-white/30 transition-all duration-300 text-sm font-medium text-white/80 self-start md:self-end backdrop-blur-sm"
                     >
                         Browse all categories
-                        <span className="w-7 h-7 rounded-full bg-red-600 group-hover:bg-black flex items-center justify-center transition-colors">
-                            <ArrowUpRight className="w-3.5 h-3.5 text-white group-hover:text-white transition-transform group-hover:rotate-45" />
+
+                        <span className="w-7 h-7 rounded-full bg-red-600 group-hover:bg-red-700 flex items-center justify-center transition-all duration-300">
+                            <ArrowUpRight className="w-3.5 h-3.5 text-white transition-transform duration-300 group-hover:rotate-45" />
                         </span>
                     </Link>
                 </div>
+
 
                 {/* Grid — bento with featured tile */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
@@ -626,7 +629,7 @@ export default function Home() {
                                 <span className="absolute inset-0 opacity-[0.03] [background-image:radial-gradient(circle,white_1px,transparent_1px)] [background-size:14px_14px]" />
 
                                 {/* Content */}
-                                <div className="relative h-full w-full flex flex-col p-5 sm:p-6">
+                                <div className="relative  w-full flex flex-col p-5 sm:p-6">
                                     {/* Top row */}
                                     <div className="flex items-start justify-between">
                                         <div className="relative w-12 h-12 rounded-2xl
@@ -642,13 +645,6 @@ export default function Home() {
                                         </div>
 
                                         <div className="flex items-center gap-2">
-                                            {cat.hot && (
-                                                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full
-                                                 bg-red-500/10 border border-red-500/30 text-[10px] font-semibold
-                                                 uppercase tracking-wider text-red-300">
-                                                    <Flame className="w-3 h-3" /> Hot
-                                                </span>
-                                            )}
                                             <span className="text-[10px] font-mono text-white/30 tracking-widest">
                                                 / {idx}
                                             </span>
@@ -683,20 +679,6 @@ export default function Home() {
                             </button>
                         )
                     })}
-                </div>
-
-
-                {/* Footer micro-strip */}
-                <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-xs text-white/40">
-                    <span className="inline-flex items-center gap-2">
-                        <span className="w-1 h-1 rounded-full bg-red-500" /> 50,000+ products
-                    </span>
-                    <span className="inline-flex items-center gap-2">
-                        <span className="w-1 h-1 rounded-full bg-red-500" /> 16 departments
-                    </span>
-                    <span className="inline-flex items-center gap-2">
-                        <span className="w-1 h-1 rounded-full bg-red-500" /> Updated daily
-                    </span>
                 </div>
             </section>
 
