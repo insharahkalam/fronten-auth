@@ -53,6 +53,7 @@ import ProductDetail from "../pages/userSide/ProductDetail";
 import Contact from "../pages/userSide/Contact";
 import Cart from "../pages/userSide/Cart";
 import { CartProvider } from "../context/CartContext";
+import Wishlist from "../pages/userSide/Wishlist";
 
 
 export default function App() {
@@ -76,11 +77,12 @@ export default function App() {
                     <Route path="/product/:id" element={<ProductDetail />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/contact" element={<Contact />} />
+                    <Route path="/wishlist" element={<Wishlist />} />
                     <Route path="*" element={
                         <div className="text-center py-32">
                             <div className="font-display text-8xl text-red-500 mb-4">404</div>
                             <p className="text-gray-400 mb-6">Page not found</p>
-                            <a href="/" className="btn-primary inline-block">Go Home</a>
+                            <a href="/home" className="btn-primary inline-block">Go Home</a>
                         </div>
                     } />
                 </Routes>
