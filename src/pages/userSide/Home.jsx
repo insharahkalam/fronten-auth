@@ -241,6 +241,7 @@
 
 
 import { Link, useNavigate } from 'react-router-dom'
+import { useMemo } from 'react'
 import {
     ArrowRight, Truck, ShieldCheck, RefreshCw, Headphones,
     Sparkles, LayoutGrid, TrendingUp, ChevronRight, Package,
@@ -361,7 +362,7 @@ const GhostBtn = ({ to, children }) => (
 export default function Home() {
     const { products, loading } = useProducts()
     const navigate = useNavigate()
-    const featured = products.slice(0, 8)
+    const featured = useMemo(() => products.filter(p => p.featured === true), [products])
 
     return (
         <div>

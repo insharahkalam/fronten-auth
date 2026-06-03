@@ -409,29 +409,28 @@ export default function Navbar() {
 
             {/* Auth */}
             {isAuthed ? (
-              <Link
-                to="/account"
-                aria-label="Account"
-                className={`${iconBtn} hidden sm:inline-flex`}
+              <button
+                onClick={handleLogout}
+                className="px-3 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
+               text-white/60 hover:text-white transition-colors"
               >
-                <User size={18} />
-              </Link>
+                Logout
+              </button>
             ) : (
               <div className="hidden sm:flex items-center gap-1.5">
                 <Link
                   to="/login"
                   className="px-3 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
-                             text-white/60 hover:text-white transition-colors no-underline"
+                 text-white/60 hover:text-white transition-colors no-underline"
                 >
                   Login
                 </Link>
+
                 <Link
-                  to="/"
+                  to="/signup"
                   className="px-3.5 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
-                             bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg
-                             shadow-[0_4px_14px_-4px_rgba(220,38,38,0.6)]
-                             hover:shadow-[0_6px_20px_-4px_rgba(220,38,38,0.8)]
-                             transition-all no-underline"
+                 bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg
+                 transition-all no-underline"
                 >
                   Sign Up
                 </Link>
@@ -474,22 +473,6 @@ export default function Navbar() {
                 {l.label}
               </NavLink>
             ))}
-
-            {/* Mobile wishlist link */}
-            <NavLink
-              to="/wishlist"
-              onClick={() => setMenuOpen(false)}
-              className="flex items-center gap-2 px-3 py-2.5 rounded-[10px] font-orbitron text-[10px]
-                         tracking-[0.15em] uppercase text-white/40 hover:text-white/80 hover:bg-white/[0.03]"
-            >
-              <Heart size={14} /> Wishlist
-              {wishlistCount > 0 && (
-                <span className="flex items-center justify-center gap-2 py-2.5 rounded-lg
-                               bg-gradient-to-r from-red-600 to-red-500 text-white
-                               font-orbitron text-[10px] tracking-[0.15em] uppercase
-                               shadow-[0_4px_14px_-4px_rgba(220,38,38,0.6)] no-underline">{wishlistCount}</span>
-              )}
-            </NavLink>
 
             {/* Mobile auth */}
             <div className="pt-3 mt-2 border-t border-white/[0.06] grid grid-cols-2 gap-2">
