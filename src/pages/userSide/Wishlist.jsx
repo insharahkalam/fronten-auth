@@ -295,14 +295,6 @@ function WishCard({ item, idx, onRemove }) {
                             </span>
                         )}
                     </div>
-
-                    <button
-                        disabled={!item.inStock}
-                        className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 disabled:bg-neutral-900 disabled:text-neutral-700 disabled:cursor-not-allowed text-white font-orbitron text-[9px] tracking-[0.2em] uppercase px-3 py-2 transition-colors"
-                    >
-                        <ShoppingBag size={11} />
-                        Add
-                    </button>
                 </div>
             </div>
 
