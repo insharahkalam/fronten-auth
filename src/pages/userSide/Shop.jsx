@@ -38,6 +38,8 @@ export default function Shop() {
 
     const setCategory = (cat) => {
         const next = new URLSearchParams(params)
+        console.log(next,'check next');
+        
         cat === 'All' ? next.delete('category') : next.set('category', cat)
         setParams(next)
     }
@@ -354,7 +356,7 @@ export default function Shop() {
                             </div>
 
                         ) : (
-                            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-5">
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
                                 {filtered.map((p, i) => <ProductCard key={p._id} product={p} index={i} />)}
                             </div>
                         )}

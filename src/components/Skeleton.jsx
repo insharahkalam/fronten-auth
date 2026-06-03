@@ -14,7 +14,7 @@ export function ProductSkeleton() {
 
 export function GridSkeleton({ count = 8 }) {
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-5">
             {Array.from({ length: count }).map((_, i) => <ProductSkeleton key={i} />)}
         </div>
     )

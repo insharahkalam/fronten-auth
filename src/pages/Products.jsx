@@ -1,142 +1,266 @@
-import { useState, useEffect } from "react";
-import { Package, Search, Trash2, Pencil, X, Save, Star, ImageOff } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { Package, Search, Trash2, Pencil, X, Save, Star, ImageOff, RefreshCw } from "lucide-react";
 import toast from "react-hot-toast";
 import api from "../config/service";
 import { Link } from "react-router-dom";
 
-const CATEGORIES = ["Electronics", "Mobile & Accessories", "Fashion (Men)", "Fashion (Women)", "Footwear", "Home & Living", "Beauty & Personal Care", "Health & Wellness", "Sports & Fitness", "Books & Stationery", "Kids & Toys", "Grocery", "Automotive", "Furniture", "Kitchen & Dining", "Other"];
+// ─── Constants ────────────────────────────────────────────────────────────────
+
+const CATEGORIES = [
+  "Electronics", "Mobile & Accessories", "Fashion (Men)", "Fashion (Women)",
+  "Footwear", "Home & Living", "Beauty & Personal Care", "Health & Wellness",
+  "Sports & Fitness", "Books & Stationery", "Kids & Toys", "Grocery",
+  "Automotive", "Furniture", "Kitchen & Dining", "Other",
+];
+
+const EDIT_FIELDS = ["title", "price", "stock", "discount", "category"];
+
+// ─── Styles ───────────────────────────────────────────────────────────────────
+
+const S = {
+  card: `relative overflow-hidden bg-white/[0.03] border border-white/[0.07]
+    rounded-2xl backdrop-blur transition-all duration-300 hover:border-white/[0.11]`,
+  shimmer: `absolute top-0 left-0 right-0 h-px
+    bg-gradient-to-r from-transparent via-red-600/35 to-transparent pointer-events-none`,
+  input: `bg-black border border-white/[0.1] rounded-lg px-2.5 py-1.5
+    text-[12.5px] text-white placeholder:text-white/20 outline-none
+    focus:border-red-600/50 focus:ring-1 focus:ring-red-600/15
+    transition-all duration-150 font-['Rajdhani',sans-serif]`,
+  btnPrimary: `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px]
+    font-semibold bg-gradient-to-br from-red-600 to-red-700
+    hover:from-red-500 hover:to-red-600 text-white
+    shadow-[0_2px_12px_rgba(220,38,38,0.3)]
+    hover:shadow-[0_4px_18px_rgba(220,38,38,0.45)]
+    disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200`,
+  btnGhost: `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px]
+    font-medium bg-transparent border border-white/[0.09] text-white/40
+    hover:text-white/70 hover:border-white/[0.18] hover:bg-white/[0.03]
+    disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200`,
+  btnEdit: `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px]
+    font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20
+    hover:bg-blue-500/20 hover:shadow-[0_0_12px_rgba(59,130,246,0.2)]
+    hover:-translate-y-px transition-all duration-200`,
+  btnDanger: `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px]
+    font-semibold bg-red-600/10 text-red-400 border border-red-600/20
+    hover:bg-red-600 hover:text-white hover:border-red-600
+    hover:shadow-[0_0_14px_rgba(220,38,38,0.4)]
+    disabled:opacity-40 disabled:cursor-not-allowed transition-all duration-200`,
+};
+
+const badge = (variant) => {
+  const variants = {
+    green: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
+    red: "bg-red-600/10    text-red-400    border border-red-600/20",
+    yellow: "bg-amber-400/10  text-amber-300  border border-amber-400/20",
+    blue: "bg-blue-500/10   text-blue-400   border border-blue-500/20",
+  };
+  return `inline-flex items-center px-2.5 py-0.5 rounded-full
+    text-[10.5px] font-semibold tracking-[0.06em] uppercase ${variants[variant]}`;
+};
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+
+const StockBadge = ({ stock }) => {
+  if (stock === 0) return <span className={badge("red")}>Out of Stock</span>;
+  if (stock < 10) return <span className={badge("yellow")}>Low Stock</span>;
+  return <span className={badge("green")}>In Stock</span>;
+};
+
+const ProductImage = ({ src, alt, size = "sm" }) => {
+  const dim = size === "sm" ? "w-11 h-11" : "w-14 h-14 sm:w-16 sm:h-16";
+  const radius = size === "sm" ? "rounded-lg" : "rounded-xl";
+  return src ? (
+    <img src={src} alt={alt}
+      className={`${dim} ${radius} object-cover border border-red-900/30 shrink-0`} />
+  ) : (
+    <div className={`${dim} ${radius} bg-red-950/40 border border-red-900/30
+      flex items-center justify-center text-white/25 shrink-0`}>
+      <ImageOff size={size === "sm" ? 16 : 18} />
+    </div>
+  );
+};
+
+const EditInput = ({ name, value, onChange, type = "text", min, max, step, className = "" }) => (
+  <input
+    name={name}
+    type={type}
+    value={value}
+    onChange={onChange}
+    min={min}
+    max={max}
+    step={step}
+    className={`${S.input} ${className}`}
+  />
+);
+
+const EditSelect = ({ name, value, onChange, className = "" }) => (
+  <select name={name} value={value} onChange={onChange}
+    className={`${S.input} cursor-pointer ${className}`}>
+    {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
+  </select>
+);
+
+// ─── Main Component ───────────────────────────────────────────────────────────
 
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [deletingId, setDeletingId] = useState(null);
-  const [confirmDelete, setConfirmDelete] = useState(null);
   const [editingId, setEditingId] = useState(null);
   const [editForm, setEditForm] = useState({});
+  const [confirmDelete, setConfirmDelete] = useState(null);
+  const [savingId, setSavingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
-  useEffect(() => { fetchProducts(); }, []);
+  // ── API functions ──────────────────────────────────────────────────────────
 
-  const fetchProducts = async () => {
+  const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
-      const res = await api.get("/products/getAllProduct");
-      setProducts(res.data.getProduct);
+      const { data } = await api.get("/products/getAllProduct");
+      setProducts(data.getProduct ?? []);
     } catch (err) {
-      console.log(err, "fetch product error");
+      console.error("fetchProducts:", err);
+      toast.error("Failed to load products.");
     } finally {
       setLoading(false);
     }
+  }, []);
+
+  const updateProduct = async (id) => {
+    try {
+      setSavingId(id);
+      const fd = new FormData();
+      EDIT_FIELDS.forEach(key => fd.append(key, editForm[key] ?? ""));
+
+      const res = await api.put(`/products/update/${id}`, fd);
+      console.log(res, 'product res updated');
+
+      await fetchProducts();
+      toast.success("Product updated.");
+      cancelEdit();
+    } catch (err) {
+      console.error("updateProduct:", err);
+      toast.error(err?.response?.data?.message ?? "Update failed. Please try again.");
+    } finally {
+      setSavingId(null);
+    }
   };
 
-  const handleDelete = async (id) => {
+  const deleteProduct = async (id) => {
     try {
       setDeletingId(id);
       await api.delete(`/products/delete/${id}`);
-      setProducts(prev => prev.filter(p => p._id !== id));
-      toast.success("Product deleted");
+
+      // Re-fetch so UI always mirrors the database
+      await fetchProducts();
+      toast.success("Product deleted.");
     } catch (err) {
-      console.log(err);
+      console.error("deleteProduct:", err);
+      toast.error(err?.response?.data?.message ?? "Delete failed. Please try again.");
     } finally {
       setDeletingId(null);
       setConfirmDelete(null);
     }
   };
 
+  // ── Edit helpers ───────────────────────────────────────────────────────────
+
   const startEdit = (product) => {
     setEditingId(product._id);
-    setEditForm({
-      title: product.title,
-      price: product.price,
-      stock: product.stock,
-      discount: product.discount,
-      category: product.category,
-    });
+    setEditForm(Object.fromEntries(EDIT_FIELDS.map(k => [k, product[k] ?? ""])));
+    setConfirmDelete(null); // close any open confirm
   };
 
-  const cancelEdit = () => { setEditingId(null); setEditForm({}); };
+  const cancelEdit = () => {
+    setEditingId(null);
+    setEditForm({});
+  };
 
   const handleEditChange = (e) => {
     const { name, value } = e.target;
     setEditForm(prev => ({ ...prev, [name]: value }));
   };
 
-  const saveEdit = async (id) => {
-    try {
-      const fd = new FormData();
-      Object.entries(editForm).forEach(([k, v]) => fd.append(k, v));
-      await api.put(`/products/update/${id}`, fd);
-    } catch {
-      // fall through — update UI regardless
-    } finally {
-      setProducts(prev => prev.map(p => p._id === id ? { ...p, ...editForm } : p));
-      toast.success("Product updated");
-      cancelEdit();
-    }
-  };
+  // ── Lifecycle ──────────────────────────────────────────────────────────────
 
-  const filtered = products.filter(p =>
-    !search ||
-    p.title?.toLowerCase().includes(search.toLowerCase()) ||
-    p.category?.toLowerCase().includes(search.toLowerCase()) ||
-    p.brand?.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => { fetchProducts(); }, [fetchProducts]);
 
-  /* ── shared primitives ── */
-  const card = `relative overflow-hidden bg-white/[0.03] border border-white/[0.07]
-    rounded-2xl backdrop-blur transition-all duration-300 hover:border-white/[0.11]`;
-  const shimmer = `absolute top-0 left-0 right-0 h-px
-    bg-gradient-to-r from-transparent via-red-600/35 to-transparent pointer-events-none`;
-  const editInput = `bg-black border border-white/[0.1] rounded-lg px-2.5 py-1.5
-    text-[12.5px] text-white placeholder:text-white/20 outline-none
-    focus:border-red-600/50 focus:ring-1 focus:ring-red-600/15
-    transition-all duration-150 font-['Rajdhani',sans-serif]`;
-  const btnPrimary = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px]
-    font-semibold bg-gradient-to-br from-red-600 to-red-700
-    hover:from-red-500 hover:to-red-600 text-white
-    shadow-[0_2px_12px_rgba(220,38,38,0.3)]
-    hover:shadow-[0_4px_18px_rgba(220,38,38,0.45)]
-    disabled:opacity-50 transition-all duration-200`;
-  const btnGhost = `flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px]
-    font-medium bg-transparent border border-white/[0.09] text-white/40
-    hover:text-white/70 hover:border-white/[0.18] hover:bg-white/[0.03]
-    transition-all duration-200`;
-  const btnEdit = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px]
-    font-semibold bg-blue-500/10 text-blue-400 border border-blue-500/20
-    hover:bg-blue-500/20 hover:shadow-[0_0_12px_rgba(59,130,246,0.2)]
-    hover:-translate-y-px transition-all duration-200`;
-  const btnDanger = `flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-[12px]
-    font-semibold bg-red-600/10 text-red-400 border border-red-600/20
-    hover:bg-red-600 hover:text-white hover:border-red-600
-    hover:shadow-[0_0_14px_rgba(220,38,38,0.4)]
-    disabled:opacity-40 disabled:pointer-events-none transition-all duration-200`;
+  // ── Derived state ──────────────────────────────────────────────────────────
 
-  const badge = (variant) => {
-    const map = {
-      green: "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20",
-      red: "bg-red-600/10    text-red-400    border border-red-600/20",
-      yellow: "bg-amber-400/10  text-amber-300  border border-amber-400/20",
-      blue: "bg-blue-500/10   text-blue-400   border border-blue-500/20",
-    };
-    return `inline-flex items-center px-2.5 py-0.5 rounded-full
-      text-[10.5px] font-semibold tracking-[0.06em] uppercase ${map[variant]}`;
-  };
+  const filtered = products.filter(p => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      p.title?.toLowerCase().includes(q) ||
+      p.category?.toLowerCase().includes(q) ||
+      p.brand?.toLowerCase().includes(q)
+    );
+  });
+
+  const stats = [
+    { label: "Total Products", value: products.length },
+    { label: "In Stock", value: products.filter(p => (p.stock ?? 0) > 0).length },
+    { label: "Out of Stock", value: products.filter(p => (p.stock ?? 0) === 0).length },
+  ];
+
+  // ── Render helpers ─────────────────────────────────────────────────────────
 
   const stockColor = (stock) =>
-    stock === 0 ? "text-red-500"
-      : stock < 10 ? "text-amber-400"
-        : "text-emerald-400";
+    stock === 0 ? "text-red-500" : stock < 10 ? "text-amber-400" : "text-emerald-400";
 
-  const StockBadge = ({ stock }) =>
-    stock === 0 ? <span className={badge("red")}>Out of Stock</span>
-      : stock < 10 ? <span className={badge("yellow")}>Low Stock</span>
-        : <span className={badge("green")}>In Stock</span>;
+  // ── Action cells ──────────────────────────────────────────────────────────
+
+  const ActionButtons = ({ product, direction = "row" }) => {
+    const isEditing = editingId === product._id;
+    const isDeleting = deletingId === product._id;
+    const isSaving = savingId === product._id;
+    const isConfirm = confirmDelete === product._id;
+    const flex = direction === "row" ? "flex items-center gap-1.5" : "flex flex-col gap-1.5";
+
+    if (isEditing) return (
+      <div className={flex}>
+        <button onClick={() => updateProduct(product._id)} disabled={isSaving} className={S.btnPrimary}>
+          <Save size={12} /> {isSaving ? "Saving…" : "Save"}
+        </button>
+        <button onClick={cancelEdit} disabled={isSaving} className={S.btnGhost}>
+          <X size={12} /> {direction === "col" && "Cancel"}
+        </button>
+      </div>
+    );
+
+    if (isConfirm) return (
+      <div className={flex}>
+        <button onClick={() => deleteProduct(product._id)} disabled={isDeleting} className={S.btnDanger}>
+          {isDeleting ? "Deleting…" : "Confirm"}
+        </button>
+        <button onClick={() => setConfirmDelete(null)} disabled={isDeleting} className={S.btnGhost}>
+          Cancel
+        </button>
+      </div>
+    );
+
+    return (
+      <div className={flex}>
+        <button onClick={() => startEdit(product)} className={S.btnEdit}>
+          <Pencil size={12} /> Edit
+        </button>
+        <button onClick={() => setConfirmDelete(product._id)} className={S.btnDanger}>
+          <Trash2 size={12} />
+        </button>
+      </div>
+    );
+  };
+
+  // ── Render ─────────────────────────────────────────────────────────────────
 
   return (
     <div className="animate-[fadeIn_.4s_ease_both]">
-      <style>{`@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}`}</style>
+      <style>{`
+        @keyframes fadeIn { from { opacity:0; transform:translateY(12px) } to { opacity:1; transform:none } }
+      `}</style>
 
-      {/* ── Page Header ── */}
+      {/* Page Header */}
       <div className="mb-7">
         <h2 className="font-['Orbitron',monospace] text-[20px] font-bold text-white
           flex items-center gap-3 mb-1.5">
@@ -148,17 +272,13 @@ export default function Products() {
         </p>
       </div>
 
-      {/* ── Stat Cards ── */}
-      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-5 mb-5 sm:mb-6">
-        {[
-          { label: "Total Products", value: products.length },
-          { label: "In Stock", value: products.filter(p => (p.stock || 0) > 0).length },
-          { label: "Out of Stock", value: products.filter(p => (p.stock || 0) === 0).length },
-        ].map(({ label, value }) => (
+      {/* Stat Cards */}
+      <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5 mb-6">
+        {stats.map(({ label, value }) => (
           <div key={label}
-            className={`${card} flex items-center gap-4 px-5 py-5 flex-[1_1_160px]
+            className={`${S.card} flex items-center gap-4 px-5 py-5
               hover:shadow-[0_0_28px_rgba(220,38,38,0.09)] hover:-translate-y-0.5`}>
-            <span className={shimmer} />
+            <span className={S.shimmer} />
             <div>
               <p className="text-[12px] tracking-[0.08em] uppercase text-white/40 mb-1
                 font-['Rajdhani',sans-serif]">{label}</p>
@@ -170,94 +290,83 @@ export default function Products() {
         ))}
       </div>
 
-      {/* ── Toolbar ── */}
-      <div className={`${card} p-4 sm:p-5 mb-4 sm:mb-5`}>
-        <span className={shimmer} />
-
-        {/* Label */}
-        <div className="flex items-center gap-2 mb-3 sm:mb-4">
-          <Search size={12} className="text-red-500 shrink-0" />
-          <p className="font-['Orbitron',monospace] text-[10px] sm:text-[11px] tracking-[0.12em] uppercase text-white/35">
-            Search Products
-          </p>
-        </div>
-
-        {/* INPUT + BUTTONS */}
+      {/* Toolbar */}
+      <div className={`${S.card} p-4 sm:p-5 mb-5`}>
+        <span className={S.shimmer} />
         <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center">
-
-          {/* Search Input */}
+          {/* Search */}
           <div className="relative flex-1">
-            <Search
-              size={13}
-              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none"
-            />
-
+            <Search size={13}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
             <input
               type="text"
               placeholder="Search by name, category, brand…"
               value={search}
               onChange={e => setSearch(e.target.value)}
               className="w-full bg-white/[0.04] border border-white/[0.08] rounded-xl
-          pl-9 pr-3.5 py-2.5 text-[13px] text-white placeholder:text-white/20
-          outline-none focus:border-red-600/50 focus:ring-2 focus:ring-red-600/10
-          font-['Rajdhani',sans-serif] transition-all duration-200"
+                pl-9 pr-3.5 py-2.5 text-[13px] text-white placeholder:text-white/20
+                outline-none focus:border-red-600/50 focus:ring-2 focus:ring-red-600/10
+                font-['Rajdhani',sans-serif] transition-all duration-200"
             />
           </div>
 
           {/* Buttons */}
           <div className="flex gap-2.5 sm:shrink-0">
-
             {search && (
-              <button
-                onClick={() => setSearch("")}
+              <button onClick={() => setSearch("")}
                 className="flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2.5
-            bg-transparent border border-white/[0.09] rounded-xl text-white/45 text-[13px] font-medium
-            hover:text-white/70 hover:border-white/[0.16] hover:bg-white/[0.03]
-            transition-all duration-200 font-['Rajdhani',sans-serif]"
-              >
+                  bg-transparent border border-white/[0.09] rounded-xl text-white/45 text-[13px]
+                  hover:text-white/70 hover:border-white/[0.16] hover:bg-white/[0.03]
+                  transition-all duration-200 font-['Rajdhani',sans-serif]">
                 <X size={12} /> Clear
               </button>
             )}
-
-            <Link
-              to="/add-product"
-              className={`${btnPrimary} no-underline flex-1 sm:flex-none justify-center`}
-            >
+            <button onClick={fetchProducts} disabled={loading}
+              className={`${S.btnGhost} px-3`} title="Refresh">
+              <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+            </button>
+            <Link to="/add-product"
+              className={`${S.btnPrimary} no-underline flex-1 sm:flex-none justify-center`}>
               <Package size={13} /> Add Product
             </Link>
-
           </div>
         </div>
+
+        {search && (
+          <p className="text-[11.5px] text-white/30 tracking-[0.05em] mt-3">
+            {filtered.length} result{filtered.length !== 1 ? "s" : ""} for "
+            <span className="text-white/50">{search}</span>"
+          </p>
+        )}
       </div>
-      {/* Result count */}
-      {search && (
-        <p className="text-[11.5px] text-white/30 tracking-[0.05em] mb-3.5">
-          {filtered.length} result{filtered.length !== 1 ? "s" : ""} for "
-          <span className="text-white/50">{search}</span>"
-        </p>
-      )}
 
-      {/* ── Products Table / Cards ── */}
-      <div className={card}>
-        <span className={shimmer} />
+      {/* Product Table / Cards */}
+      <div className={S.card}>
+        <span className={S.shimmer} />
 
-        {loading ? (
+        {/* Loading */}
+        {loading && (
           <div className="flex items-center justify-center py-16">
             <div className="w-9 h-9 border-[3px] border-white/[0.07] border-t-red-600 rounded-full animate-spin" />
           </div>
+        )}
 
-        ) : filtered.length === 0 ? (
+        {/* Empty */}
+        {!loading && filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-16 gap-3 text-white/25">
             <Package size={44} className="opacity-30" />
-            <p className="text-[14px]">No products found</p>
-            <Link to="/add-product" className={`${btnPrimary} no-underline mt-1`}>
-              Add products
-            </Link>
+            <p className="text-[14px]">{search ? "No products match your search" : "No products found"}</p>
+            {!search && (
+              <Link to="/add-product" className={`${S.btnPrimary} no-underline mt-1`}>
+                Add Product
+              </Link>
+            )}
           </div>
+        )}
 
-        ) : (
+        {/* Desktop Table */}
+        {!loading && filtered.length > 0 && (
           <>
-            {/* ── Desktop Table (lg+) ── */}
             <div className="hidden lg:block overflow-x-auto">
               <table className="w-full border-collapse">
                 <thead>
@@ -273,28 +382,19 @@ export default function Products() {
                 <tbody>
                   {filtered.map(product => {
                     const isEditing = editingId === product._id;
-                    const stock = product.stock || 0;
+                    const stock = product.stock ?? 0;
                     return (
                       <tr key={product._id}
-                        className="border-b border-white/[0.03] hover:bg-red-950/[0.1] transition-colors duration-150">
+                        className="border-b border-white/[0.03] hover:bg-red-950/[0.1] transition-colors">
 
                         {/* Product */}
                         <td className="px-4 py-3">
                           <div className="flex items-center gap-3">
-                            {product.image ? (
-                              <img src={product.image} alt={product.title}
-                                className="w-11 h-11 rounded-lg object-cover border border-red-900/30 shrink-0" />
-                            ) : (
-                              <div className="w-11 h-11 rounded-lg bg-red-950/40 border border-red-900/30
-                                flex items-center justify-center text-white/25 shrink-0">
-                                <ImageOff size={16} />
-                              </div>
-                            )}
+                            <ProductImage src={product.image} alt={product.title} size="sm" />
                             <div className="min-w-0">
                               {isEditing ? (
-                                <input name="title" value={editForm.title}
-                                  onChange={handleEditChange}
-                                  className={`${editInput} w-[160px]`} />
+                                <EditInput name="title" value={editForm.title}
+                                  onChange={handleEditChange} className="w-[160px]" />
                               ) : (
                                 <>
                                   <p className="text-[13px] font-semibold text-white max-w-[180px] truncate">
@@ -313,11 +413,8 @@ export default function Products() {
                         {/* Category */}
                         <td className="px-4 py-3">
                           {isEditing ? (
-                            <select name="category" value={editForm.category}
-                              onChange={handleEditChange}
-                              className={`${editInput} w-[130px] cursor-pointer`}>
-                              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
+                            <EditSelect name="category" value={editForm.category}
+                              onChange={handleEditChange} className="w-[130px]" />
                           ) : (
                             <span className={badge("blue")}>{product.category || "—"}</span>
                           )}
@@ -326,12 +423,11 @@ export default function Products() {
                         {/* Price */}
                         <td className="px-4 py-3">
                           {isEditing ? (
-                            <input name="price" type="number" value={editForm.price}
-                              onChange={handleEditChange} min="0" step="0.01"
-                              className={`${editInput} w-[90px]`} />
+                            <EditInput name="price" type="number" value={editForm.price}
+                              onChange={handleEditChange} min="0" step="0.01" className="w-[90px]" />
                           ) : (
                             <span className="text-[14px] font-semibold text-white tabular-nums">
-                              ${parseFloat(product.price || 0).toFixed(2)}
+                              ${parseFloat(product.price ?? 0).toFixed(2)}
                             </span>
                           )}
                         </td>
@@ -339,9 +435,8 @@ export default function Products() {
                         {/* Stock */}
                         <td className="px-4 py-3">
                           {isEditing ? (
-                            <input name="stock" type="number" value={editForm.stock}
-                              onChange={handleEditChange} min="0"
-                              className={`${editInput} w-[75px]`} />
+                            <EditInput name="stock" type="number" value={editForm.stock}
+                              onChange={handleEditChange} min="0" className="w-[75px]" />
                           ) : (
                             <span className={`text-[14px] font-bold tabular-nums ${stockColor(stock)}`}>
                               {stock}
@@ -352,9 +447,8 @@ export default function Products() {
                         {/* Discount */}
                         <td className="px-4 py-3">
                           {isEditing ? (
-                            <input name="discount" type="number" value={editForm.discount}
-                              onChange={handleEditChange} min="0" max="100"
-                              className={`${editInput} w-[70px]`} />
+                            <EditInput name="discount" type="number" value={editForm.discount}
+                              onChange={handleEditChange} min="0" max="100" className="w-[70px]" />
                           ) : product.discount ? (
                             <span className={badge("yellow")}>-{product.discount}%</span>
                           ) : (
@@ -363,42 +457,11 @@ export default function Products() {
                         </td>
 
                         {/* Status */}
-                        <td className="px-4 py-3">
-                          <StockBadge stock={stock} />
-                        </td>
+                        <td className="px-4 py-3"><StockBadge stock={stock} /></td>
 
                         {/* Actions */}
                         <td className="px-4 py-3">
-                          {isEditing ? (
-                            <div className="flex items-center gap-1.5">
-                              <button onClick={() => saveEdit(product._id)} className={btnPrimary}>
-                                <Save size={12} /> Save
-                              </button>
-                              <button onClick={cancelEdit} className={btnGhost}>
-                                <X size={12} />
-                              </button>
-                            </div>
-                          ) : confirmDelete === product._id ? (
-                            <div className="flex items-center gap-1.5">
-                              <button onClick={() => handleDelete(product._id)}
-                                disabled={deletingId === product._id}
-                                className={btnDanger}>
-                                {deletingId === product._id ? "…" : "Confirm"}
-                              </button>
-                              <button onClick={() => setConfirmDelete(null)} className={btnGhost}>
-                                Cancel
-                              </button>
-                            </div>
-                          ) : (
-                            <div className="flex items-center gap-1.5">
-                              <button onClick={() => startEdit(product)} className={btnEdit}>
-                                <Pencil size={12} /> Edit
-                              </button>
-                              <button onClick={() => setConfirmDelete(product._id)} className={btnDanger}>
-                                <Trash2 size={12} />
-                              </button>
-                            </div>
-                          )}
+                          <ActionButtons product={product} direction="row" />
                         </td>
                       </tr>
                     );
@@ -407,34 +470,23 @@ export default function Products() {
               </table>
             </div>
 
-            {/* ── Mobile / Tablet Cards (below lg) ── */}
+            {/* Mobile Cards */}
             <div className="lg:hidden divide-y divide-white/[0.04]">
               {filtered.map(product => {
                 const isEditing = editingId === product._id;
-                const stock = product.stock || 0;
+                const stock = product.stock ?? 0;
                 return (
                   <div key={product._id}
-                    className="p-4 sm:p-5 hover:bg-red-950/[0.08] transition-colors duration-150">
+                    className="p-4 sm:p-5 hover:bg-red-950/[0.08] transition-colors">
 
-                    {/* Top row: image + info + actions */}
+                    {/* Top: image + info + actions */}
                     <div className="flex items-start gap-3">
-                      {/* Image */}
-                      {product.image ? (
-                        <img src={product.image} alt={product.title}
-                          className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover border border-red-900/30 shrink-0" />
-                      ) : (
-                        <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-red-950/40 border border-red-900/30
-                          flex items-center justify-center text-white/25 shrink-0">
-                          <ImageOff size={18} />
-                        </div>
-                      )}
+                      <ProductImage src={product.image} alt={product.title} size="lg" />
 
-                      {/* Info */}
                       <div className="flex-1 min-w-0">
                         {isEditing ? (
-                          <input name="title" value={editForm.title}
-                            onChange={handleEditChange}
-                            className={`${editInput} w-full mb-1.5`} />
+                          <EditInput name="title" value={editForm.title}
+                            onChange={handleEditChange} className="w-full mb-1.5" />
                         ) : (
                           <p className="text-[13.5px] font-semibold text-white truncate leading-snug">
                             {product.featured && (
@@ -444,15 +496,10 @@ export default function Products() {
                           </p>
                         )}
                         <p className="text-[11px] text-white/30 mt-0.5 truncate">{product.brand || "—"}</p>
-
-                        {/* Badges row */}
                         <div className="flex items-center gap-1.5 mt-2 flex-wrap">
                           {isEditing ? (
-                            <select name="category" value={editForm.category}
-                              onChange={handleEditChange}
-                              className={`${editInput} cursor-pointer`}>
-                              {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
-                            </select>
+                            <EditSelect name="category" value={editForm.category}
+                              onChange={handleEditChange} />
                           ) : (
                             <span className={badge("blue")}>{product.category || "—"}</span>
                           )}
@@ -460,87 +507,45 @@ export default function Products() {
                         </div>
                       </div>
 
-                      {/* Action buttons — top right */}
                       <div className="shrink-0">
-                        {isEditing ? (
-                          <div className="flex flex-col gap-1.5">
-                            <button onClick={() => saveEdit(product._id)} className={btnPrimary}>
-                              <Save size={11} /> Save
-                            </button>
-                            <button onClick={cancelEdit} className={btnGhost}>
-                              <X size={11} /> Cancel
-                            </button>
-                          </div>
-                        ) : confirmDelete === product._id ? (
-                          <div className="flex flex-col gap-1.5">
-                            <button onClick={() => handleDelete(product._id)}
-                              disabled={deletingId === product._id}
-                              className={btnDanger}>
-                              {deletingId === product._id ? "…" : "Confirm"}
-                            </button>
-                            <button onClick={() => setConfirmDelete(null)} className={btnGhost}>
-                              Cancel
-                            </button>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col gap-1.5">
-                            <button onClick={() => startEdit(product)} className={btnEdit}>
-                              <Pencil size={11} /> Edit
-                            </button>
-                            <button onClick={() => setConfirmDelete(product._id)} className={btnDanger}>
-                              <Trash2 size={11} />
-                            </button>
-                          </div>
-                        )}
+                        <ActionButtons product={product} direction="col" />
                       </div>
                     </div>
 
-                    {/* Bottom row: price / stock / discount — edit inputs or read values */}
+                    {/* Bottom: price / stock / discount */}
                     <div className="mt-3.5 pt-3 border-t border-white/[0.05] grid grid-cols-3 gap-3">
-                      {/* Price */}
-                      <div>
-                        <p className="text-[9.5px] uppercase tracking-[0.1em] text-white/25 mb-1
-                          font-['Rajdhani',sans-serif]">Price</p>
-                        {isEditing ? (
-                          <input name="price" type="number" value={editForm.price}
-                            onChange={handleEditChange} min="0" step="0.01"
-                            className={`${editInput} w-full`} />
-                        ) : (
-                          <span className="text-[13px] font-semibold text-white tabular-nums">
-                            ${parseFloat(product.price || 0).toFixed(2)}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Stock */}
-                      <div>
-                        <p className="text-[9.5px] uppercase tracking-[0.1em] text-white/25 mb-1
-                          font-['Rajdhani',sans-serif]">Stock</p>
-                        {isEditing ? (
-                          <input name="stock" type="number" value={editForm.stock}
-                            onChange={handleEditChange} min="0"
-                            className={`${editInput} w-full`} />
-                        ) : (
-                          <span className={`text-[13px] font-bold tabular-nums ${stockColor(stock)}`}>
+                      {[
+                        {
+                          label: "Price",
+                          view: <span className="text-[13px] font-semibold text-white tabular-nums">
+                            ${parseFloat(product.price ?? 0).toFixed(2)}
+                          </span>,
+                          edit: <EditInput name="price" type="number" value={editForm.price}
+                            onChange={handleEditChange} min="0" step="0.01" className="w-full" />,
+                        },
+                        {
+                          label: "Stock",
+                          view: <span className={`text-[13px] font-bold tabular-nums ${stockColor(stock)}`}>
                             {stock}
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Discount */}
-                      <div>
-                        <p className="text-[9.5px] uppercase tracking-[0.1em] text-white/25 mb-1
-                          font-['Rajdhani',sans-serif]">Discount</p>
-                        {isEditing ? (
-                          <input name="discount" type="number" value={editForm.discount}
-                            onChange={handleEditChange} min="0" max="100"
-                            className={`${editInput} w-full`} />
-                        ) : product.discount ? (
-                          <span className={badge("yellow")}>-{product.discount}%</span>
-                        ) : (
-                          <span className="text-[13px] text-white/25">—</span>
-                        )}
-                      </div>
+                          </span>,
+                          edit: <EditInput name="stock" type="number" value={editForm.stock}
+                            onChange={handleEditChange} min="0" className="w-full" />,
+                        },
+                        {
+                          label: "Discount",
+                          view: product.discount
+                            ? <span className={badge("yellow")}>-{product.discount}%</span>
+                            : <span className="text-[13px] text-white/25">—</span>,
+                          edit: <EditInput name="discount" type="number" value={editForm.discount}
+                            onChange={handleEditChange} min="0" max="100" className="w-full" />,
+                        },
+                      ].map(({ label, view, edit }) => (
+                        <div key={label}>
+                          <p className="text-[9.5px] uppercase tracking-[0.1em] text-white/25 mb-1
+                            font-['Rajdhani',sans-serif]">{label}</p>
+                          {isEditing ? edit : view}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 );
@@ -551,8 +556,8 @@ export default function Products() {
 
         {/* Footer */}
         {!loading && filtered.length > 0 && (
-          <div className="px-4 sm:px-5 py-3.5 border-t border-white/[0.05] text-[11.5px]
-            text-white/25 tracking-[0.05em] font-['Inter',sans-serif]">
+          <div className="px-4 sm:px-5 py-3.5 border-t border-white/[0.05]
+            text-[11.5px] text-white/25 tracking-[0.05em] font-['Inter',sans-serif]">
             Showing <span className="text-white/40">{filtered.length}</span> of{" "}
             <span className="text-white/40">{products.length}</span> products
           </div>
