@@ -51,7 +51,7 @@ export default function Navbar() {
   const handleLogout = () => {
     logout()
     setMenuOpen(false)
-    navigate('/login')
+    navigate('/')
   }
 
   const iconBtn =
@@ -133,15 +133,16 @@ export default function Navbar() {
             {/* Wishlist */}
             <Link to="/wishlist" aria-label="Wishlist" className={iconBtn}>
               <Heart size={18} />
-              {wishlistCount > 0 && <Badge value={wishlistCount} tone="amber" />}
+              {isAuthed && wishlistCount > 0 && (
+                <Badge value={wishlistCount} tone="amber" />
+              )}
             </Link>
 
             {/* Cart */}
             <Link to="/cart" aria-label="Cart" className={iconBtn}>
               <ShoppingCart size={18} />
-              {count > 0 && <Badge value={count} />}
+              {isAuthed && count > 0 && <Badge value={count} />}
             </Link>
-
             <span className="hidden sm:block w-px h-6 bg-white/10 mx-1" />
 
             {/* ── Auth buttons ── */}
@@ -157,8 +158,8 @@ export default function Navbar() {
                 <button
                   onClick={handleLogout}
                   className="px-3.5 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
-                             border border-red-600/40 text-red-400 hover:bg-red-600 hover:text-white
-                             rounded-lg transition-all"
+                              border border-red-600/40 text-red-400 hover:bg-red-600 hover:text-white
+                              rounded-lg transition-all"
                 >
                   Logout
                 </button>
@@ -169,15 +170,15 @@ export default function Navbar() {
                 <Link
                   to="/login"
                   className="px-3 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
-                             text-white/60 hover:text-white transition-colors no-underline"
+                              text-white/60 hover:text-white transition-colors no-underline"
                 >
                   Login
                 </Link>
                 <Link
                   to="/"
                   className="px-3.5 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
-                             bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg
-                             transition-all no-underline"
+                              bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg
+                              transition-all no-underline"
                 >
                   Sign Up
                 </Link>
@@ -211,7 +212,7 @@ export default function Navbar() {
                 onClick={() => setMenuOpen(false)}
                 className={({ isActive }) =>
                   `block px-3 py-2.5 rounded-[10px] font-orbitron text-[10px] tracking-[0.15em] uppercase transition-all
-                   ${isActive
+                    ${isActive
                     ? 'text-red-400 bg-red-600/10 border border-red-600/25'
                     : 'text-white/40 hover:text-white/80 hover:bg-white/[0.03]'}`
                 }
@@ -228,14 +229,14 @@ export default function Navbar() {
                     to="/account"
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-lg
-                               bg-white/[0.04] text-white/80 font-orbitron text-[10px] tracking-[0.15em] uppercase no-underline"
+                                bg-white/[0.04] text-white/80 font-orbitron text-[10px] tracking-[0.15em] uppercase no-underline"
                   >
                     <User size={14} /> My Account
                   </Link>
                   <button
                     onClick={handleLogout}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-lg
-                               border border-red-600/40 text-red-400 font-orbitron text-[10px] tracking-[0.15em] uppercase"
+                                border border-red-600/40 text-red-400 font-orbitron text-[10px] tracking-[0.15em] uppercase"
                   >
                     Logout
                   </button>
@@ -246,7 +247,7 @@ export default function Navbar() {
                     to="/login"
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-lg
-                               bg-white/[0.04] text-white/80 font-orbitron text-[10px] tracking-[0.15em] uppercase no-underline"
+                                bg-white/[0.04] text-white/80 font-orbitron text-[10px] tracking-[0.15em] uppercase no-underline"
                   >
                     <LogIn size={14} /> Login
                   </Link>
@@ -254,9 +255,9 @@ export default function Navbar() {
                     to="/"
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-lg
-                               bg-gradient-to-r from-red-600 to-red-500 text-white
-                               font-orbitron text-[10px] tracking-[0.15em] uppercase
-                               shadow-[0_4px_14px_-4px_rgba(220,38,38,0.6)] no-underline"
+                                bg-gradient-to-r from-red-600 to-red-500 text-white
+                                font-orbitron text-[10px] tracking-[0.15em] uppercase
+                                shadow-[0_4px_14px_-4px_rgba(220,38,38,0.6)] no-underline"
                   >
                     Sign Up
                   </Link>

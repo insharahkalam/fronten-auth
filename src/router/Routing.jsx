@@ -81,11 +81,9 @@ export default function App() {
             <AuthProvider>
                 {/* CartProvider is inside AuthProvider so CartContext can access auth if needed */}
                 <CartProvider>
-                    <Toaster position="top-right" />
-
                     <Routes>
                         {/* ── Public / auth pages ── */}
-                        <Route path="/" element={<Signup />} />
+                        <Route path="/signup" element={<Signup />} />
                         <Route path="/login" element={<Login />} />
 
                         {/* ── Admin pages ── */}
@@ -97,7 +95,7 @@ export default function App() {
                         </Route>
 
                         {/* ── User-facing storefront ── */}
-                        <Route path="/home" element={<Home />} />
+                        <Route path="/" element={<Home />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/shop" element={<Shop />} />
                         <Route path="/product/:id" element={<ProductDetail />} />

@@ -47,16 +47,16 @@ export default function Login() {
             });
 
             // Keep individual keys for any legacy code that reads them directly
-            localStorage.setItem("token", token);
-            localStorage.setItem("role", logUser.role);
-            localStorage.setItem("username", logUser.username);
-            localStorage.setItem("email", logUser.email);
-            localStorage.setItem("id", logUser._id);
+            // localStorage.setItem("token", token);
+            // localStorage.setItem("role", logUser.role);
+            // localStorage.setItem("username", logUser.username);
+            // localStorage.setItem("email", logUser.email);
+            // localStorage.setItem("id", logUser._id);
 
             toast.success("Login successful!");
 
             setTimeout(() => {
-                navigate(logUser.role === "admin" ? "/dashboard" : "/home");
+                navigate(logUser.role === "admin" ? "/dashboard" : "/");
             }, 1200);
 
         } catch (error) {

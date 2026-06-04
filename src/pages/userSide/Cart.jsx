@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom'
 import { Trash2, ShoppingBag, ArrowLeft, ArrowRight, Tag, Shield, Truck, Plus, Minus } from 'lucide-react'
-import { useCart } from '../../context/CartContext'
+import { useSelector, useDispatch } from "react-redux";
+import { selectCartItems, selectCartTotal } from "../../redux/cartSelectors";
+
+import { removeFromCart, updateQty } from '../../redux/slices/cartSlice'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import Navbar from '../../components/Navbar'
@@ -9,14 +12,24 @@ import Footer from '../../components/Footer'
 const PLACEHOLDER = 'https://placehold.co/120x120/0a0a0a/333?text=NOIR'
 
 export default function Cart() {
-  const { items, total, removeFromCart, updateQty, clearCart } = useCart()
+  const dispatch = useDispatch();
+  const cartState = useSelector((state) => state.cart.items);
+  console.log("CART STATE FULL:", cartState);
+
+  const items = useSelector(selectCartItems);
+  console.log(items,"check");
+  
+  const total = useSelector(selectCartTotal);
+
   const [promo, setPromo] = useState('')
   const [discount, setDisc] = useState(0)
 
   const tax = Math.round(total * 0.16)
   const shipping = total > 2000 ? 0 : 200
   const grandTotal = total - discount + tax + shipping
-  const itemCount = items.reduce((s, i) => s + i.qty, 0)
+  const itemCount = Array.isArray(items)
+    ? items.reduce((s, i) => s + i.qty, 0)
+    : 0;
 
   const toastStyle = {
     style: { background: '#0a0a0a', color: '#fff', border: '1px solid #1f1f1f', borderRadius: '2px', fontFamily: 'Rajdhani, sans-serif', letterSpacing: '0.05em' },
@@ -147,7 +160,7 @@ export default function Cart() {
                       <div className="flex items-center justify-between mt-3 gap-3 flex-wrap">
                         <div className="flex items-center border border-neutral-800">
                           <button
-                            onClick={() => updateQty(item._id, item.qty - 1)}
+                            onClick={() => dispatch(updateQty({ id: item._id, qty: item.qty - 1 }))}
                             className="px-3 py-2 text-neutral-500 hover:text-red-500 hover:bg-neutral-900 transition-colors"
                           >
                             <Minus size={12} />
@@ -156,7 +169,9 @@ export default function Cart() {
                             {String(item.qty).padStart(2, '0')}
                           </span>
                           <button
-                            onClick={() => updateQty(item._id, item.qty + 1)}
+                            onClick={() =>
+                              dispatch(updateQty({ id: item._id, qty: item.qty + 1 }))
+                            }
                             className="px-3 py-2 text-neutral-500 hover:text-red-500 hover:bg-neutral-900 transition-colors"
                           >
                             <Plus size={12} />
@@ -168,7 +183,7 @@ export default function Cart() {
                             Rs. {(item.price * item.qty).toLocaleString()}
                           </span>
                           <button
-                            onClick={() => removeFromCart(item._id)}
+                            onClick={() => dispatch(removeFromCart(item._id))}
                             className="text-neutral-700 hover:text-red-600 transition-colors p-1"
                             aria-label="Remove"
                           >
@@ -189,7 +204,7 @@ export default function Cart() {
                   <ArrowLeft size={14} /> Continue
                 </Link>
                 <button
-                  onClick={clearCart}
+                  onClick={dispatch(clearCart())}
                   className="font-orbitron text-[11px] tracking-[0.25em] text-neutral-600 hover:text-red-600 uppercase flex items-center gap-2 transition-colors"
                 >
                   <Trash2 size={12} /> Clear All
