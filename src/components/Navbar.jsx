@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { ShoppingCart, Search, Menu, X, Zap, Heart, User, LogIn } from 'lucide-react'
-import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
+import { useSelector } from 'react-redux'
+import { selectCartCount } from '../redux/cartSelectors'
 
 const WISHLIST_KEY = 'wishlist:v1'
 
@@ -14,8 +15,9 @@ function getWishlistCount() {
 }
 
 export default function Navbar() {
-  const { count } = useCart()
+  // const { count } = useCart()
   const { isAuthed, user, logout } = useAuth()
+  const count = useSelector(selectCartCount)
 
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearch] = useState(false)

@@ -3,7 +3,7 @@ import { Trash2, ShoppingBag, ArrowLeft, ArrowRight, Tag, Shield, Truck, Plus, M
 import { useSelector, useDispatch } from "react-redux";
 import { selectCartItems, selectCartTotal } from "../../redux/cartSelectors";
 
-import { removeFromCart, updateQty } from '../../redux/slices/cartSlice'
+import { removeFromCart, clearCart, updateQty } from '../../redux/slices/cartSlice'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
 import Navbar from '../../components/Navbar'
@@ -17,8 +17,8 @@ export default function Cart() {
   console.log("CART STATE FULL:", cartState);
 
   const items = useSelector(selectCartItems);
-  console.log(items,"check");
-  
+  console.log(items, "check");
+
   const total = useSelector(selectCartTotal);
 
   const [promo, setPromo] = useState('')
@@ -204,7 +204,7 @@ export default function Cart() {
                   <ArrowLeft size={14} /> Continue
                 </Link>
                 <button
-                  onClick={dispatch(clearCart())}
+                  onClick={() => dispatch(clearCart())}
                   className="font-orbitron text-[11px] tracking-[0.25em] text-neutral-600 hover:text-red-600 uppercase flex items-center gap-2 transition-colors"
                 >
                   <Trash2 size={12} /> Clear All

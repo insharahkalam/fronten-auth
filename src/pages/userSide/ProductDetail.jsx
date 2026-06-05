@@ -366,13 +366,14 @@ import {
     ChevronLeft, ChevronRight, Minus, Plus, Zap, Award, RotateCcw
 } from 'lucide-react'
 import api from '../../config/service'
-import { useCart } from '../../context/CartContext'
 import { useAuth } from '../../context/AuthContext'
 import { useProducts } from '../../hooks/useProducts'
 import ProductCard from '../../components/ProductCard'
 import toast from 'react-hot-toast'
 import Footer from '../../components/Footer'
 import Navbar from '../../components/Navbar'
+import { useDispatch } from 'react-redux'
+import { addToCart } from '../../redux/slices/cartSlice'
 
 const PLACEHOLDER = 'https://placehold.co/800x800/0c1418/333?text=No+Image'
 
@@ -423,7 +424,7 @@ const Feature = ({ icon: Icon, title, desc }) => (
 
 export default function ProductDetail() {
     const { id } = useParams()
-    const { addToCart } = useCart()
+    const dispatch = useDispatch()
     const { isAuthed } = useAuth()
     const navigate = useNavigate()
     const { products } = useProducts()
@@ -508,7 +509,7 @@ export default function ProductDetail() {
         if (!inStock || adding) return
 
         setAdding(true)
-        for (let i = 0; i < qty; i++) addToCart(product)
+        dispatch(addToCart({ ...product, qty }))
         toast.success(`${qty}× ${title} added to cart`, {
             style: toastStyle,
             iconTheme: { primary: '#dc2626', secondary: '#fff' },
