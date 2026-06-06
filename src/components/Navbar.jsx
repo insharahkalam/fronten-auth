@@ -56,7 +56,7 @@ export default function Navbar() {
     dispatch(clearCart());
     logout();
     setMenuOpen(false)
-    navigate('/')
+    navigate('/auth')
   }
 
   const iconBtn =
@@ -171,21 +171,15 @@ export default function Navbar() {
               </div>
             ) : (
               /* Guest: show Login + Sign Up */
-              <div className="hidden sm:flex items-center gap-1.5">
+              <div className="hidden sm:flex items-center">
                 <Link
-                  to="/login"
-                  className="px-3 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
-                              text-white/60 hover:text-white transition-colors no-underline"
+                  to="/auth"
+                  className="w-10 h-10 flex items-center justify-center
+               border border-red-600/30 rounded-full
+               text-white hover:bg-red-600 hover:border-red-600
+               transition-all duration-300"
                 >
-                  Login
-                </Link>
-                <Link
-                  to="/signup"
-                  className="px-3.5 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
-                              bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg
-                              transition-all no-underline"
-                >
-                  Sign Up
+                  <User size={18} />
                 </Link>
               </div>
             )}

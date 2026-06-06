@@ -8,7 +8,7 @@ const AdminRoute = ({ children }) => {
 
     if (role !== "admin") {
         alert("Access denied! only admin can access this.");
-        navigate('/login')
+        navigate('/auth')
         return;
     }
     return <>

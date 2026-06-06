@@ -32,7 +32,7 @@ export default function AdminLayout() {
       console.log(res.data);
       localStorage.clear();
       toast.success("Logout successful");
-      setTimeout(() => navigate("/login"), 800);
+      setTimeout(() => navigate("/auth"), 800);
     } catch (error) {
       console.log(error);
       toast.error(error.response?.data?.message || "Logout failed");

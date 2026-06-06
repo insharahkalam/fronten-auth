@@ -5,8 +5,6 @@ import Dashboard from "../pages/Dashboard"
 import Users from "../pages/Users"
 import AddProduct from "../pages/AddProduct"
 import Products from "../pages/Products"
-import Login from "../pages/Login"
-import Signup from "../pages/Signup"
 import Home from '../pages/userSide/Home'
 import About from "../pages/userSide/About"
 import Shop from "../pages/userSide/Shop"
@@ -17,6 +15,7 @@ import Wishlist from "../pages/userSide/Wishlist"
 import { AuthProvider } from "../context/AuthContext"
 import ErrorPage from "../pages/userSide/ErrorPage"
 import Checkout from "../pages/userSide/Checkout"
+import AuthPage from "../pages/Authpage"
 
 export default function App() {
     return (
@@ -26,8 +25,7 @@ export default function App() {
 
                 <Routes>
                     {/* ── Public / auth pages ── */}
-                    <Route path="/signup" element={<Signup />} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/auth" element={<AuthPage />} />
 
                     {/* ── Admin pages ── */}
                     <Route element={<AdminLayout />}>
