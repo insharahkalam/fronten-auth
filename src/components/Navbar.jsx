@@ -4,6 +4,8 @@ import { ShoppingCart, Search, Menu, X, Zap, Heart, User, LogIn } from 'lucide-r
 import { useAuth } from '../context/AuthContext'
 import { useSelector } from 'react-redux'
 import { selectCartCount } from '../redux/cartSelectors'
+import { useDispatch } from 'react-redux';
+import { clearCart } from '../redux/slices/cartSlice';
 
 const WISHLIST_KEY = 'wishlist:v1'
 
@@ -15,7 +17,7 @@ function getWishlistCount() {
 }
 
 export default function Navbar() {
-  // const { count } = useCart()
+  const dispatch = useDispatch();
   const { isAuthed, user, logout } = useAuth()
   const count = useSelector(selectCartCount)
 
@@ -37,7 +39,7 @@ export default function Navbar() {
   }, [])
 
   const links = [
-    { to: '/home', label: 'Home' },
+    { to: '/', label: 'Home' },
     { to: '/shop', label: 'Shop' },
     { to: '/about', label: 'About' },
     { to: '/contact', label: 'Contact' },
@@ -51,7 +53,8 @@ export default function Navbar() {
   }
 
   const handleLogout = () => {
-    logout()
+    dispatch(clearCart());
+    logout();
     setMenuOpen(false)
     navigate('/')
   }
@@ -81,7 +84,7 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16 gap-4">
 
           {/* ── Logo ── */}
-          <Link to="/home" className="flex items-center gap-2.5 flex-shrink-0 no-underline">
+          <Link to="/" className="flex items-center gap-2.5 flex-shrink-0 no-underline">
             <div className="icon-box w-8 h-8">
               <Zap size={14} fill="currentColor" />
             </div>
@@ -177,7 +180,7 @@ export default function Navbar() {
                   Login
                 </Link>
                 <Link
-                  to="/"
+                  to="/signup"
                   className="px-3.5 py-1.5 font-orbitron text-[10px] tracking-[0.15em] uppercase
                               bg-gradient-to-r from-red-600 to-red-500 text-white rounded-lg
                               transition-all no-underline"
@@ -227,14 +230,14 @@ export default function Navbar() {
             <div className="pt-3 mt-2 border-t border-white/[0.06] grid grid-cols-2 gap-2">
               {isAuthed ? (
                 <>
-                  <Link
-                    to="/account"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 py-2.5 rounded-lg
-                                bg-white/[0.04] text-white/80 font-orbitron text-[10px] tracking-[0.15em] uppercase no-underline"
-                  >
-                    <User size={14} /> My Account
-                  </Link>
+                  {user?.name && (
+                    <span className="flex items-center justify-center gap-2 py-2.5 rounded-lg
+                                bg-white/[0.04] text-white/80 font-orbitron text-[10px] tracking-[0.15em] uppercase no-underline">
+                      <User size={14} />
+                      {user.name.split(' ')[0].toUpperCase()}
+                    </span>
+                  )}
+
                   <button
                     onClick={handleLogout}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-lg

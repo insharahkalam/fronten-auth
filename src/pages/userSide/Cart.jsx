@@ -287,8 +287,7 @@ export default function Cart() {
                     </div>
                   </div>
 
-                  <button
-                    onClick={() => toast.success('REDIRECTING TO CHECKOUT', toastStyle)}
+                  <Link to={'/checkout'}
                     className="group w-full bg-red-600 hover:bg-red-700 text-white font-orbitron text-xs tracking-[0.3em] uppercase py-4 flex items-center justify-center gap-3 transition-all"
                   >
                     Checkout
@@ -296,7 +295,7 @@ export default function Cart() {
                       size={16}
                       className="group-hover:translate-x-1 transition-transform"
                     />
-                  </button>
+                  </Link>
 
                   {/* meta */}
                   <div className="mt-5 pt-5 border-t border-neutral-900 space-y-2">
