@@ -46,13 +46,6 @@ export default function Login() {
                 role: logUser.role,
             });
 
-            // Keep individual keys for any legacy code that reads them directly
-            // localStorage.setItem("token", token);
-            // localStorage.setItem("role", logUser.role);
-            // localStorage.setItem("username", logUser.username);
-            // localStorage.setItem("email", logUser.email);
-            // localStorage.setItem("id", logUser._id);
-
             toast.success("Login successful!");
 
             setTimeout(() => {
