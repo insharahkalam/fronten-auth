@@ -59,6 +59,7 @@ export default function Checkout() {
         setPlacingOrder(true)
         await new Promise(r => setTimeout(r, 1800))
         dispatch(clearCart())
+        localStorage.removeItem("cart")
         setOrderDone(true)
         setPlacingOrder(false)
     }

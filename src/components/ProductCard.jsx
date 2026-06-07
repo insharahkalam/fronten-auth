@@ -94,10 +94,9 @@ export default function ProductCard({ product, index = 0 }) {
         e.preventDefault()
         e.stopPropagation()
         toast('Please login to continue', {
-            icon: '🔐',
             style: authToastStyle,
         })
-        navigate('/login')
+        navigate('/auth')
         return false
     }
 

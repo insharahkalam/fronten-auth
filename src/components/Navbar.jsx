@@ -221,7 +221,7 @@ export default function Navbar() {
             ))}
 
             {/* Mobile auth */}
-            <div className="pt-3 mt-2 border-t border-white/[0.06] grid grid-cols-2 gap-2">
+            <div className="pt-3 mt-2 border-t border-white/[0.06] grid gap-2">
               {isAuthed ? (
                 <>
                   {user?.name && (
@@ -243,23 +243,14 @@ export default function Navbar() {
               ) : (
                 <>
                   <Link
-                    to="/login"
+                    to="/auth"
                     onClick={() => setMenuOpen(false)}
                     className="flex items-center justify-center gap-2 py-2.5 rounded-lg
                                 bg-white/[0.04] text-white/80 font-orbitron text-[10px] tracking-[0.15em] uppercase no-underline"
                   >
                     <LogIn size={14} /> Login
                   </Link>
-                  <Link
-                    to="/"
-                    onClick={() => setMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 py-2.5 rounded-lg
-                                bg-gradient-to-r from-red-600 to-red-500 text-white
-                                font-orbitron text-[10px] tracking-[0.15em] uppercase
-                                shadow-[0_4px_14px_-4px_rgba(220,38,38,0.6)] no-underline"
-                  >
-                    Sign Up
-                  </Link>
+
                 </>
               )}
             </div>

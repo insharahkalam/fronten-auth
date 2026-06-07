@@ -141,10 +141,9 @@ export default function ProductDetail() {
     const handleAdd = () => {
         if (!isAuthed) {
             toast('Please login to continue', {
-                icon: '🔐',
                 style: { ...toastStyle, border: '1px solid rgba(251,191,36,0.35)' },
             })
-            navigate('/login')
+            navigate('/auth')
             return
         }
         if (!inStock || adding) return
