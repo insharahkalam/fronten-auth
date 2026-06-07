@@ -56,7 +56,7 @@ export default function Navbar() {
     dispatch(clearCart());
     logout();
     setMenuOpen(false)
-    navigate('/auth')
+    navigate('/')
   }
 
   const iconBtn =
