@@ -16,6 +16,7 @@ import {
     ShoppingBasket, Car, Armchair, UtensilsCrossed, Package as PackageIcon,
     ShoppingBag, ArrowUpRight, Flame
 } from 'lucide-react'
+import { useState, useEffect } from 'react'
 
 const CATEGORIES = [
     { name: 'Electronics', icon: Laptop, count: '4.2K' },
@@ -121,6 +122,26 @@ export default function Home() {
     const { products, loading } = useProducts()
     const navigate = useNavigate()
     const featured = useMemo(() => products.filter(p => p.featured === true), [products])
+
+    const [allProducts, setAllProducts] = useState([]);
+
+    useEffect(() => {
+        const getProducts = async () => {
+            const res = await axios.get("YOUR_API_URL");
+            setAllProducts(res.data);
+            console.log(res.data, "home page res check");
+
+        };
+
+        getProducts();
+    }, []);
+
+
+    const getCategoryCount = (categoryName) => {
+        return allProducts.filter(
+            (product) => product.category === categoryName
+        ).length;
+    };
 
     return (
         <div>
@@ -419,7 +440,7 @@ export default function Home() {
                                         <div className="mt-3 flex items-center justify-between">
                                             <span className="inline-flex items-center gap-2 text-xs text-white/45">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                                {cat.count} items
+                                                {getCategoryCount()} items
                                             </span>
 
                                             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50
