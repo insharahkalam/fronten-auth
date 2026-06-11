@@ -87,9 +87,9 @@ export default function Checkout() {
                 <p className="font-orbitron text-[11px] tracking-[0.2em] text-neutral-700 uppercase mb-12">
                     Confirmation sent to <span className="text-neutral-400">{form.email}</span>
                 </p>
-                <Link to="/shop"
+                <Link to="/orders"
                     className="inline-flex items-center gap-2 px-10 py-4 bg-red-600 hover:bg-red-700 text-white font-orbitron text-[11px] tracking-[0.35em] uppercase transition-all hover:shadow-[0_0_30px_rgba(220,38,38,0.3)]">
-                    <ArrowLeft size={13} /> Continue Shopping
+                    <ArrowLeft size={13} /> Check Your Order
                 </Link>
             </main>
             <Footer />

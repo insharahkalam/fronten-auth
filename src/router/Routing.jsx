@@ -16,6 +16,8 @@ import { AuthProvider } from "../context/AuthContext"
 import ErrorPage from "../pages/userSide/ErrorPage"
 import Checkout from "../pages/userSide/Checkout"
 import AuthPage from "../pages/Authpage"
+import AdminOrders from "../pages/AdminOrders"
+import Orders from "../pages/userSide/Orders"
 
 export default function App() {
     return (
@@ -33,6 +35,7 @@ export default function App() {
                         <Route path="/users" element={<Users />} />
                         <Route path="/add-product" element={<AddProduct />} />
                         <Route path="/products" element={<Products />} />
+                        <Route path="/adminOrders" element={<AdminOrders />} />
                     </Route>
 
                     {/* ── User-facing storefront ── */}
@@ -44,6 +47,7 @@ export default function App() {
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/wishlist" element={<Wishlist />} />
                     <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/orders" element={<Orders />} />
                     {/* =====404==== */}
                     <Route path='*' element={<ErrorPage />} />
                 </Routes>

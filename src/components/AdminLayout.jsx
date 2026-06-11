@@ -9,7 +9,7 @@ const navLinks = [
   { to: "/users", label: "Users", icon: Users },
   { to: "/add-product", label: "Add Product", icon: PlusSquare },
   { to: "/products", label: "Products", icon: Package },
-  { to: "/orders", label: "Orders", icon: ShoppingBag },
+  { to: "/adminOrders", label: "Orders", icon: ShoppingBag },
 ];
 
 const pageTitles = {

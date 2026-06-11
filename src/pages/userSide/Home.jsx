@@ -17,6 +17,7 @@ import {
     ShoppingBag, ArrowUpRight, Flame
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import api from '../../config/service'
 
 const CATEGORIES = [
     { name: 'Electronics', icon: Laptop, count: '4.2K' },
@@ -127,12 +128,10 @@ export default function Home() {
 
     useEffect(() => {
         const getProducts = async () => {
-            const res = await axios.get("YOUR_API_URL");
-            setAllProducts(res.data);
-            console.log(res.data, "home page res check");
-
+            const res = await api.get('/products/getAllProduct');
+            setAllProducts(res.data.getProduct);
+            console.log(res.data.getProduct, "home page res check");
         };
-
         getProducts();
     }, []);
 
@@ -142,6 +141,8 @@ export default function Home() {
             (product) => product.category === categoryName
         ).length;
     };
+    console.log(allProducts, "count show check");
+
 
     return (
         <div>
@@ -440,7 +441,7 @@ export default function Home() {
                                         <div className="mt-3 flex items-center justify-between">
                                             <span className="inline-flex items-center gap-2 text-xs text-white/45">
                                                 <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                                                {getCategoryCount()} items
+                                                {getCategoryCount(cat.name)} items
                                             </span>
 
                                             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-white/50
