@@ -1,456 +1,1226 @@
-import { useState, useEffect } from 'react'
+// // import { useState, useMemo } from 'react'
+// // import {
+// //   Package, Check, Clock, CheckCircle, Truck, MapPin, XCircle,
+// //   ShoppingBag, ChevronDown, ChevronUp, Calendar, CreditCard,
+// //   Hash, Star, Search, Filter
+// // } from 'lucide-react'
+// // import Navbar from '../../components/Navbar'
+// // import Footer from '../../components/Footer'
+
+// // export default function Orders() {
+
+// //   const statusConfig = {
+// //     Pending: { icon: Clock, step: 1 },
+// //     Confirmed: { icon: CheckCircle, step: 2 },
+// //     Shipped: { icon: Truck, step: 3 },
+// //     Delivered: { icon: Package, step: 4 },
+// //     Cancelled: { icon: XCircle, step: 0 },
+// //   };
+
+// //   const FONT_LINK = "https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap"
+
+// //   const NOISE_BG = "url(\"data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E\")"
+
+
+// //   const orders = [
+// //     { id: "ORD-78A2F1", status: "Shipped", createdAt: "10 Jun 2025", total: 12499, paymentMethod: "Card", address: "221B Baker Street, London", items: [{ name: "Cyber Hoodie", qty: 1, price: 4999 }, { name: "Neon Sneakers", qty: 1, price: 7500 }] },
+// //     { id: "ORD-552C90", status: "Delivered", createdAt: "22 May 2025", total: 3200, paymentMethod: "COD", address: "Sector 17, Chandigarh", items: [{ name: "Tactical Cap", qty: 2, price: 1600 }] },
+// //     { id: "ORD-119BB7", status: "Pending", createdAt: "13 Jun 2025", total: 899, paymentMethod: "UPI", address: "MG Road, Bangalore", items: [{ name: "Carbon Wallet", qty: 1, price: 899 }] },
+// //   ];
+
+// //   const filterOptions = ["All", "Pending", "Confirmed", "Shipped", "Delivered", "Cancelled"];
+// //   const progressSteps = ["Pending", "Confirmed", "Shipped", "Delivered"];
+
+
+// //   const [expanded, setExpanded] = useState(orders[0]?.id ?? null);
+// //   const [filter, setFilter] = useState("All");
+// //   const [search, setSearch] = useState("");
+
+// //   const filtered = useMemo(() => orders.filter((order) => {
+// //     const query = search.trim().toLowerCase();
+// //     return (filter === "All" || order.status === filter) &&
+// //       (!query || order.id.toLowerCase().includes(query) || order.items.some((item) => item.name.toLowerCase().includes(query)));
+// //   }), [filter, search]);
+
+// //   const stats = [
+// //     { label: "Total orders", value: orders.length, icon: ShoppingBag },
+// //     { label: "In transit", value: orders.filter((o) => ["Confirmed", "Shipped"].includes(o.status)).length, icon: Truck },
+// //     { label: "Delivered", value: orders.filter((o) => o.status === "Delivered").length, icon: CheckCircle },
+// //     { label: "Total spent", value: `₹${orders.reduce((sum, o) => sum + o.total, 0).toLocaleString()}`, icon: CreditCard },
+// //   ];
+
+
+// //   return (
+// //     <div className="noise min-h-screen bg-black text-neutral-200 font-rajdhani relative overflow-hidden">
+// //       <style>{`
+// //         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
+// //         .font-orbitron { font-family: 'Orbitron', monospace; }
+// //         .font-rajdhani { font-family: 'Rajdhani', sans-serif; }
+// //         @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+// //         .fade-in { animation: fadeIn 0.35s ease both; }
+// //         .noise::before {
+// //           content:'';position:fixed;inset:0;
+// //           background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+// //           pointer-events:none;z-index:0;opacity:0.35;
+// //         }
+// //         .noise::after {
+// //           content:'';position:fixed;top:-20%;left:-10%;width:50%;height:60%;
+// //           background:radial-gradient(ellipse,rgba(220,38,38,0.06) 0%,transparent 70%);
+// //           pointer-events:none;z-index:0;
+// //         }
+// //       `}</style>
+
+// //       {/* noise + red glow */}
+// //       <div className="pointer-events-none fixed inset-0 z-0" style={{ backgroundImage: NOISE_BG, opacity: 0.4 }} />
+// //       <div className="pointer-events-none fixed -top-1/4 -left-1/4 w-[60%] h-[60%] z-0"
+// //         style={{ background: 'radial-gradient(ellipse, rgba(220,38,38,0.10) 0%, transparent 70%)' }} />
+// //       <div className="pointer-events-none fixed -bottom-1/4 -right-1/4 w-[60%] h-[60%] z-0"
+// //         style={{ background: 'radial-gradient(ellipse, rgba(220,38,38,0.06) 0%, transparent 70%)' }} />
+
+// //       <style>{`
+// //         @keyframes ordFadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+// //         @keyframes ordPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+// //         .ord-fade { animation: ordFadeUp 0.4s ease both; }
+// //         .ord-pulse { animation: ordPulse 2s ease-in-out infinite; }
+// //         .ord-scroll::-webkit-scrollbar { width: 6px; }
+// //         .ord-scroll::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 3px; }
+// //       `}</style>
+
+// //       <Navbar />
+// //       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 py-10">
+// //         {/* HEADER */}
+
+// //         <div className="mb-12 border-b border-neutral-900 pb-8">
+// //           <div className="flex items-center gap-3 mb-3">
+// //             <span className="h-px w-8 bg-red-600" />
+// //             <p className="font-orbitron text-[10px] tracking-[0.4em] text-red-600 uppercase">
+// //               [ 03 ] / Track Order
+// //             </p>
+// //           </div>
+// //           <div className="flex items-end justify-between flex-wrap gap-4">
+// //             <h1 className="font-orbitron font-black text-4xl sm:text-5xl lg:text-6xl text-white tracking-tight uppercase">
+// //               My <span className="text-red-600">ORDERS</span>
+// //             </h1>
+
+// //           </div>
+// //         </div>
+
+
+// //         {/* Stats */}
+// //         <section className="mt-7 grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-4">
+// //           {stats.map(({ label, value, icon: Icon }) => (
+// //             <article key={label} className="group border border-border bg-card/75 p-4 backdrop-blur-sm transition hover:border-primary/60 sm:p-5">
+// //               <div className="flex items-start justify-between gap-3">
+// //                 <div className="min-w-0">
+// //                   <p className="text-xs font-semibold uppercase tracking-[0.16em] text-muted-foreground">{label}</p>
+// //                   <p className="mt-3 font-display text-xl font-bold sm:text-3xl">{value}</p>
+// //                 </div>
+// //                 <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-border bg-secondary text-primary">
+// //                   <Icon className="h-4 w-4" />
+// //                 </span>
+// //               </div>
+// //             </article>
+// //           ))}
+// //         </section>
+
+// //         {/* Search & Filter */}
+// //         <section className="mt-8 space-y-4 border-y border-border py-5">
+// //           <label className="relative block">
+// //             <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+// //             <input
+// //               value={search}
+// //               onChange={(e) => setSearch(e.target.value)}
+// //               placeholder="Search order ID or product..."
+// //               className="h-12 w-full rounded-lg border border-input bg-card/80 pl-11 pr-4 text-sm outline-none transition placeholder:text-muted-foreground focus:border-primary focus:ring-2 focus:ring-ring/20"
+// //             />
+// //           </label>
+// //           <div className="no-scrollbar flex gap-2 overflow-x-auto pb-1">
+// //             {filterOptions.map((option) => (
+// //               <button
+// //                 key={option}
+// //                 type="button"
+// //                 size="sm"
+// //                 variant={filter === option ? "default" : "outline"}
+// //                 onClick={() => setFilter(option)}
+// //                 className="shrink-0 uppercase tracking-widest"
+// //               >
+// //                 {option}
+// //               </button>
+// //             ))}
+// //           </div>
+// //         </section>
+
+// //         {/* Orders List */}
+// //         <section className="mt-6 space-y-4">
+// //           {filtered.length === 0 ? (
+// //             <div className="border border-dashed border-border bg-card/50 px-6 py-16 text-center">
+// //               <Search className="mx-auto h-8 w-8 text-primary" />
+// //               <h2 className="mt-4 font-display text-lg font-bold">NO ORDERS FOUND</h2>
+// //               <p className="mt-2 text-sm text-muted-foreground">Try adjusting your filters or search.</p>
+// //             </div>
+// //           ) : filtered.map((order, index) => {
+// //             const config = statusConfig[order.status];
+// //             const StatusIcon = config.icon;
+// //             const isOpen = expanded === order.id;
+
+// //             return (
+// //               <article
+// //                 key={order.id}
+// //                 className="order-enter relative overflow-hidden border border-border bg-card/90 backdrop-blur-sm"
+// //                 style={{ animationDelay: `${index * 70}ms` }}
+// //               >
+// //                 <span className="absolute inset-y-0 left-0 w-1 bg-primary" />
+// //                 <div className="p-5 sm:p-6 lg:p-7">
+// //                   {/* Order Header */}
+// //                   <div className="grid grid-cols-[minmax(0,1fr)_auto] gap-4">
+// //                     <div className="flex min-w-0 items-start gap-3 sm:gap-4">
+// //                       <span className="grid h-11 w-11 shrink-0 place-items-center rounded-lg border border-primary/40 bg-primary/10 text-primary">
+// //                         <StatusIcon className="h-5 w-5" />
+// //                       </span>
+// //                       <div className="min-w-0">
+// //                         <div className="flex min-w-0 flex-wrap items-center gap-2">
+// //                           <h2 className="truncate font-display text-sm font-bold sm:text-base">{order.id}</h2>
+// //                           <span className="rounded border border-primary/40 bg-primary/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-widest text-primary">
+// //                             {order.status}
+// //                           </span>
+// //                         </div>
+// //                         <div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
+// //                           <span className="flex items-center gap-1.5"><Calendar className="h-3.5 w-3.5" />{order.createdAt}</span>
+// //                           <span className="flex items-center gap-1.5"><CreditCard className="h-3.5 w-3.5" />{order.paymentMethod}</span>
+// //                         </div>
+// //                       </div>
+// //                     </div>
+// //                     <div className="text-right">
+// //                       <p className="text-[10px] uppercase tracking-widest text-muted-foreground">Total</p>
+// //                       <p className="mt-1 font-display text-lg font-bold sm:text-xl">₹{order.total.toLocaleString()}</p>
+// //                     </div>
+// //                   </div>
+
+// //                   {/* Progress Tracker */}
+// //                   {order.status !== "Cancelled" && (
+// //                     <div className="mt-6 grid grid-cols-4">
+// //                       {progressSteps.map((step, stepIndex) => {
+// //                         const reached = config.step >= stepIndex + 1;
+// //                         return (
+// //                           <div key={step} className="relative flex flex-col items-center">
+// //                             <div className={`absolute left-0 right-0 top-3 h-px ${stepIndex < config.step ? "bg-primary" : "bg-border"}`} />
+// //                             <span className={`relative z-10 grid h-6 w-6 place-items-center rounded-full border text-[10px] font-bold ${reached ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground"}`}>
+// //                               {reached ? <Check className="h-3 w-3" /> : stepIndex + 1}
+// //                             </span>
+// //                             <span className={`mt-2 text-[9px] font-semibold uppercase tracking-wider sm:text-[11px] ${reached ? "text-foreground" : "text-muted-foreground"}`}>
+// //                               {step}
+// //                             </span>
+// //                           </div>
+// //                         );
+// //                       })}
+// //                     </div>
+// //                   )}
+
+// //                   {/* Toggle Details */}
+// //                   <button
+// //                     type="button"
+// //                     variant="ghost"
+// //                     onClick={() => setExpanded(isOpen ? null : order.id)}
+// //                     className="mt-5 w-full border-t border-border pt-4 text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-foreground"
+// //                   >
+// //                     {isOpen ? <>Hide details </> : <>View details <ChevronDown /></>}
+// //                   </button>
+// //                 </div>
+
+// //                 {/* Expanded Details */}
+// //                 {isOpen && (
+// //                   <div className="grid gap-6 border-t border-border bg-background/35 p-5 sm:p-6 lg:grid-cols-[1.35fr_1fr] lg:p-7">
+// //                     <div>
+// //                       <h3 className="font-display text-xs font-bold uppercase tracking-[0.2em] text-primary">Items</h3>
+// //                       <div className="mt-4 divide-y divide-border">
+// //                         {order.items.map((item) => (
+// //                           <div key={item.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-4 py-3">
+// //                             <div className="flex min-w-0 items-center gap-3">
+// //                               <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-secondary text-muted-foreground">
+// //                                 <Package className="h-4 w-4" />
+// //                               </span>
+// //                               <div className="min-w-0">
+// //                                 <p className="truncate text-sm font-bold">{item.name}</p>
+// //                                 <p className="text-xs text-muted-foreground">Qty: {item.qty}</p>
+// //                               </div>
+// //                             </div>
+// //                             <p className="font-display text-sm font-bold">₹{(item.price * item.qty).toLocaleString()}</p>
+// //                           </div>
+// //                         ))}
+// //                       </div>
+// //                     </div>
+// //                     <div className="space-y-5">
+// //                       <div className="flex items-start gap-3">
+// //                         <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+// //                         <div>
+// //                           <h3 className="text-xs font-bold uppercase tracking-widest text-muted-foreground">Delivery address</h3>
+// //                           <p className="mt-2 text-sm leading-6">{order.address}</p>
+// //                         </div>
+// //                       </div>
+// //                       <div className="flex flex-wrap gap-2">
+// //                         {order.status === "Delivered" && <button size="sm"><Star /> Leave review</button>}
+// //                         {!["Delivered", "Cancelled"].includes(order.status) && (
+// //                           <button size="sm" variant="destructive"><XCircle /> Cancel order</button>
+// //                         )}
+// //                       </div>
+// //                     </div>
+// //                   </div>
+// //                 )}
+// //               </article>
+// //             );
+// //           })}
+// //         </section>
+// //       </div>
+// //       <Footer />
+
+// //     </div >
+// //   )
+// // }
+
+
+
+// import { useState, useMemo } from 'react'
+// import {
+//   Package, Check, Clock, CheckCircle, Truck, MapPin, XCircle,
+//   ShoppingBag, ChevronDown, ChevronUp, Calendar, CreditCard,
+//   Hash, Star, Search, Filter
+// } from 'lucide-react'
+// import Navbar from '../../components/Navbar'
+// import Footer from '../../components/Footer'
+
+// const STATUS_CONFIG = {
+//   Pending: { color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/25', icon: Clock, step: 1 },
+//   Confirmed: { color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/25', icon: CheckCircle, step: 2 },
+//   Shipped: { color: 'text-cyan-400', bg: 'bg-cyan-400/10', border: 'border-cyan-400/25', icon: Truck, step: 3 },
+//   Delivered: { color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/25', icon: Package, step: 4 },
+//   Cancelled: { color: 'text-red-400', bg: 'bg-red-400/10', border: 'border-red-400/25', icon: XCircle, step: 0 },
+// }
+
+// const FILTER_OPTIONS = ['All', 'Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled']
+// const PROGRESS_STEPS = ['Pending', 'Confirmed', 'Shipped', 'Delivered']
+
+// const ORDERS = [
+//   {
+//     id: 'ORD-78A2F1', status: 'Shipped', createdAt: '10 Jun 2025', total: 12499,
+//     paymentMethod: 'Card', address: '221B Baker Street, London',
+//     items: [
+//       { name: 'Cyber Hoodie', qty: 1, price: 4999 },
+//       { name: 'Neon Sneakers', qty: 1, price: 7500 },
+//     ],
+//   },
+//   {
+//     id: 'ORD-552C90', status: 'Delivered', createdAt: '22 May 2025', total: 3200,
+//     paymentMethod: 'COD', address: 'Sector 17, Chandigarh',
+//     items: [
+//       { name: 'Tactical Cap', qty: 2, price: 1600 },
+//     ],
+//   },
+//   {
+//     id: 'ORD-119BB7', status: 'Pending', createdAt: '13 Jun 2025', total: 899,
+//     paymentMethod: 'UPI', address: 'MG Road, Bangalore',
+//     items: [
+//       { name: 'Carbon Wallet', qty: 1, price: 899 },
+//     ],
+//   },
+// ]
+
+// const SectionEyebrow = ({ icon: Icon, text }) => (
+//   <div className="inline-flex items-center gap-2 mb-4">
+//     <div className="w-5 h-px bg-red-600/50" />
+//     <Icon size={9} className="text-red-500" />
+//     <span className="font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.22em] uppercase text-red-500/70">
+//       {text}
+//     </span>
+//     <div className="w-5 h-px bg-red-600/50" />
+//   </div>
+// )
+
+// const StatusBadge = ({ status }) => {
+//   const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.Pending
+//   const Icon = cfg.icon
+//   return (
+//     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full
+//       ${cfg.bg} ${cfg.border} border
+//       font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.1em] uppercase ${cfg.color}`}>
+//       <Icon size={10} strokeWidth={2} />
+//       {status}
+//     </span>
+//   )
+// }
+
+// export default function Orders() {
+//   const [expanded, setExpanded] = useState(ORDERS[0]?.id ?? null)
+//   const [filter, setFilter] = useState('All')
+//   const [search, setSearch] = useState('')
+
+//   const filtered = useMemo(() => ORDERS.filter((order) => {
+//     const query = search.trim().toLowerCase()
+//     return (filter === 'All' || order.status === filter) &&
+//       (!query ||
+//         order.id.toLowerCase().includes(query) ||
+//         order.items.some((item) => item.name.toLowerCase().includes(query)))
+//   }), [filter, search])
+
+//   const stats = [
+//     { label: 'Total Orders', value: ORDERS.length, icon: ShoppingBag },
+//     { label: 'In Transit', value: ORDERS.filter((o) => ['Confirmed', 'Shipped'].includes(o.status)).length, icon: Truck },
+//     { label: 'Delivered', value: ORDERS.filter((o) => o.status === 'Delivered').length, icon: CheckCircle },
+//     { label: 'Total Spent', value: `Rs. ${ORDERS.reduce((sum, o) => sum + o.total, 0).toLocaleString()}`, icon: CreditCard },
+//   ]
+
+//   const toggle = (id) => setExpanded(e => e === id ? null : id)
+
+//   const inputCls = `bg-white/[0.04] border border-white/[0.08] rounded-xl
+//     text-white placeholder:text-white/20 tracking-wide
+//     font-['Rajdhani',sans-serif] outline-none
+//     focus:border-red-600/50 focus:ring-2 focus:ring-red-600/10
+//     transition-all duration-200`
+
+//   return (
+//     <div className="noise min-h-screen bg-[#05080a] font-['Rajdhani',sans-serif] text-white antialiased">
+//       <style>{`
+//         @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
+//         @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+//         .fade-in { animation: fadeIn 0.35s ease both; }
+//         @keyframes ordFadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+//         @keyframes ordPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+//         .ord-fade { animation: ordFadeUp 0.4s ease both; }
+//         .ord-pulse { animation: ordPulse 2s ease-in-out infinite; }
+//         .ord-scroll::-webkit-scrollbar { height: 6px; }
+//         .ord-scroll::-webkit-scrollbar-track { background: transparent; }
+//         .ord-scroll::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 3px; }
+//         .noise::before {
+//           content:'';position:fixed;inset:0;
+//           background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+//           pointer-events:none;z-index:0;opacity:0.35;
+//         }
+//         .noise::after {
+//           content:'';position:fixed;top:-20%;left:-10%;width:50%;height:60%;
+//           background:radial-gradient(ellipse,rgba(220,38,38,0.06) 0%,transparent 70%);
+//           pointer-events:none;z-index:0;
+//         }
+//       `}</style>
+
+//       <Navbar />
+
+//       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+//         {/* ── Header ── */}
+//         <div className="mb-10 sm:mb-12 ord-fade">
+//           <SectionEyebrow icon={ShoppingBag} text="[ 03 ] / Track Order" />
+//           <h1 className="font-['Orbitron',monospace] font-black text-[26px] sm:text-[36px]
+//             text-white leading-none tracking-tight mb-3">
+//             MY ORDERS
+//           </h1>
+//           <p className="text-[13px] sm:text-[14px] tracking-wide text-white/30">
+//             View order status, track shipments, and manage your purchases.
+//           </p>
+//         </div>
+
+//         {/* ── Stats ── */}
+//         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 ord-fade" style={{ animationDelay: '60ms' }}>
+//           {stats.map(({ label, value, icon: Icon }) => (
+//             <div key={label}
+//               className="relative overflow-hidden bg-white/[0.025] border border-white/[0.07]
+//                 rounded-2xl p-4 sm:p-5 group
+//                 hover:border-red-600/25 hover:bg-red-600/[0.04] transition-all duration-300">
+//               <div className="absolute top-0 left-0 right-0 h-px
+//                 bg-gradient-to-r from-transparent via-red-600/25 to-transparent" />
+
+//               <div className="flex items-center justify-between mb-3">
+//                 <div className="w-8 h-8 rounded-xl bg-red-600/10 border border-red-600/20
+//                   flex items-center justify-center text-red-500
+//                   group-hover:bg-red-600/15 group-hover:border-red-600/35 transition-all duration-300">
+//                   <Icon size={14} strokeWidth={1.5} />
+//                 </div>
+//               </div>
+//               <p className="font-['Orbitron',monospace] text-[16px] sm:text-[20px] font-black
+//                 text-white leading-none mb-1">
+//                 {value}
+//               </p>
+//               <p className="font-['Orbitron',monospace] text-[8.5px] tracking-[0.16em]
+//                 uppercase text-white/25">
+//                 {label}
+//               </p>
+//             </div>
+//           ))}
+//         </div>
+
+//         {/* ── Search & Filter ── */}
+//         <div className="flex flex-col sm:flex-row gap-3 mb-8 ord-fade" style={{ animationDelay: '120ms' }}>
+//           {/* Search */}
+//           <div className="relative flex-1">
+//             <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
+//             <input
+//               value={search}
+//               onChange={e => setSearch(e.target.value)}
+//               placeholder="Search order ID or product…"
+//               className={`${inputCls} w-full pl-9 pr-4 py-3 text-[13px]`}
+//             />
+//           </div>
+
+//           {/* Filter chips */}
+//           <div className="flex items-center gap-2 overflow-x-auto ord-scroll pb-1 sm:pb-0">
+//             {FILTER_OPTIONS.map(option => {
+//               const active = filter === option
+//               return (
+//                 <button key={option}
+//                   onClick={() => setFilter(option)}
+//                   className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl
+//                     font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+//                     border transition-all duration-200
+//                     ${active
+//                       ? 'bg-red-600/10 border-red-600/30 text-red-400'
+//                       : 'bg-white/[0.03] border-white/[0.07] text-white/35 hover:text-white/60 hover:border-white/[0.14]'
+//                     }`}>
+//                   {option === 'All' && <Filter size={10} />}
+//                   {option}
+//                 </button>
+//               )
+//             })}
+//           </div>
+//         </div>
+
+//         {/* ── Orders List ── */}
+//         <div className="space-y-4">
+
+//           {filtered.length === 0 ? (
+//             <div className="flex flex-col items-center justify-center py-24 gap-4
+//               border border-dashed border-white/[0.07] rounded-3xl bg-white/[0.01]">
+//               <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.07]
+//                 flex items-center justify-center">
+//                 <Package size={24} className="text-white/15" />
+//               </div>
+//               <div className="text-center">
+//                 <p className="font-['Orbitron',monospace] text-[12px] font-bold tracking-widest
+//                   uppercase text-white/40 mb-2">No Orders Found</p>
+//                 <p className="text-[13px] text-white/20 tracking-wide">
+//                   Try adjusting your filters or search.
+//                 </p>
+//               </div>
+//             </div>
+//           ) : filtered.map((order, index) => {
+//             const cfg = STATUS_CONFIG[order.status]
+//             const StatusIcon = cfg.icon
+//             const isOpen = expanded === order.id
+
+//             return (
+//               <div key={order.id}
+//                 className="relative overflow-hidden bg-white/[0.025] border border-white/[0.07]
+//                   rounded-2xl transition-all duration-300 hover:border-white/[0.11] ord-fade"
+//                 style={{ animationDelay: `${index * 60}ms` }}>
+
+//                 <div className="absolute top-0 left-0 right-0 h-px
+//                   bg-gradient-to-r from-transparent via-red-600/25 to-transparent" />
+
+//                 <div className="p-5 sm:p-6">
+
+//                   {/* ── Order Header ── */}
+//                   <div className="flex items-start sm:items-center justify-between gap-4 flex-col sm:flex-row">
+//                     <div className="flex items-center gap-3.5">
+//                       <div className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center
+//                         ${cfg.bg} ${cfg.border} border ${cfg.color}`}>
+//                         <StatusIcon size={16} strokeWidth={1.5} />
+//                       </div>
+//                       <div>
+//                         <div className="flex items-center gap-2 mb-1 flex-wrap">
+//                           <Hash size={10} className="text-red-500" />
+//                           <span className="font-['Orbitron',monospace] text-[11px] font-bold
+//                             tracking-[0.1em] text-white">
+//                             {order.id}
+//                           </span>
+//                           <StatusBadge status={order.status} />
+//                         </div>
+//                         <div className="flex items-center gap-3 text-white/25 text-[11.5px] tracking-wide flex-wrap">
+//                           <span className="inline-flex items-center gap-1.5">
+//                             <Calendar size={10} /> {order.createdAt}
+//                           </span>
+//                           <span className="inline-flex items-center gap-1.5">
+//                             <CreditCard size={10} /> {order.paymentMethod}
+//                           </span>
+//                         </div>
+//                       </div>
+//                     </div>
+
+//                     <div className="text-right sm:text-right shrink-0">
+//                       <p className="font-['Orbitron',monospace] text-[8.5px] tracking-[0.16em]
+//                         uppercase text-white/25 mb-1">Total</p>
+//                       <p className="font-['Orbitron',monospace] text-[16px] sm:text-[18px] font-black text-white">
+//                         Rs. {order.total.toLocaleString()}
+//                       </p>
+//                     </div>
+//                   </div>
+
+//                   {/* ── Progress Tracker ── */}
+//                   {order.status !== 'Cancelled' && (
+//                     <div className="mt-6 pt-5 border-t border-white/[0.05]">
+//                       <div className="flex items-center justify-between relative">
+//                         {/* connecting line */}
+//                         <div className="absolute top-3.5 left-0 right-0 h-px bg-white/[0.06]" />
+//                         <div
+//                           className="absolute top-3.5 left-0 h-px bg-gradient-to-r from-red-600 to-red-400 transition-all duration-700"
+//                           style={{ width: `${(Math.max(cfg.step - 1, 0) / (PROGRESS_STEPS.length - 1)) * 100}%` }}
+//                         />
+//                         {PROGRESS_STEPS.map((step, stepIndex) => {
+//                           const reached = cfg.step >= stepIndex + 1
+//                           const active = cfg.step === stepIndex + 1
+//                           return (
+//                             <div key={step} className="flex flex-col items-center gap-2 relative z-10">
+//                               <div className={`w-7 h-7 rounded-full border-2 flex items-center justify-center
+//                                 font-['Orbitron',monospace] text-[10px] font-bold transition-all duration-300
+//                                 ${active
+//                                   ? 'bg-red-600 border-red-500 text-white shadow-[0_0_12px_rgba(220,38,38,0.5)]'
+//                                   : reached
+//                                     ? 'bg-red-600/30 border-red-600/60 text-red-300'
+//                                     : 'bg-[#05080a] border-white/[0.1] text-white/20'
+//                                 }`}>
+//                                 {reached ? <Check size={12} /> : stepIndex + 1}
+//                               </div>
+//                               <span className={`font-['Orbitron',monospace] text-[7px] tracking-[0.08em] uppercase
+//                                 hidden sm:block text-center max-w-[60px] leading-tight
+//                                 ${active ? 'text-red-400' : reached ? 'text-white/35' : 'text-white/15'}`}>
+//                                 {step}
+//                               </span>
+//                             </div>
+//                           )
+//                         })}
+//                       </div>
+//                     </div>
+//                   )}
+
+//                   {/* ── Toggle Details ── */}
+//                   <button
+//                     onClick={() => toggle(order.id)}
+//                     className="mt-5 w-full border-t border-white/[0.05] pt-4 flex items-center justify-center gap-2
+//                       font-['Orbitron',monospace] text-[9px] tracking-[0.2em] uppercase
+//                       text-white/25 hover:text-red-400 transition-colors duration-200">
+//                     {isOpen ? 'Hide Details' : 'View Details'}
+//                     {isOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+//                   </button>
+//                 </div>
+
+//                 {/* ── Expanded Details ── */}
+//                 {isOpen && (
+//                   <div className="px-5 sm:px-6 pb-6 -mt-2">
+
+//                     {/* Items */}
+//                     <div className="mb-4">
+//                       <p className="font-['Orbitron',monospace] text-[9px] tracking-[0.18em]
+//                         uppercase text-white/25 mb-3">Items</p>
+//                       <div className="space-y-2.5">
+//                         {order.items.map((item, i) => (
+//                           <div key={i}
+//                             className="flex items-center gap-3 p-3 rounded-xl
+//                               bg-white/[0.02] border border-white/[0.05]">
+//                             <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center
+//                               bg-white/[0.04] border border-white/[0.07]">
+//                               <Package size={15} className="text-white/15" />
+//                             </div>
+//                             <div className="flex-1 min-w-0">
+//                               <p className="text-[13px] font-semibold text-white truncate tracking-wide">
+//                                 {item.name}
+//                               </p>
+//                               <p className="text-[11.5px] text-white/30 mt-0.5">
+//                                 Qty: {item.qty}
+//                               </p>
+//                             </div>
+//                             <div className="shrink-0 font-['Orbitron',monospace] text-[11px]
+//                               font-bold text-white/60">
+//                               Rs. {(item.price * item.qty).toLocaleString()}
+//                             </div>
+//                           </div>
+//                         ))}
+//                       </div>
+//                     </div>
+
+//                     {/* Address + Actions */}
+//                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+//                       <div className="p-3.5 rounded-xl bg-white/[0.02] border border-white/[0.05]
+//                         flex items-start gap-3">
+//                         <div className="w-8 h-8 rounded-lg shrink-0 flex items-center justify-center
+//                           bg-red-600/10 border border-red-600/20 text-red-500">
+//                           <MapPin size={13} strokeWidth={1.5} />
+//                         </div>
+//                         <div>
+//                           <p className="font-['Orbitron',monospace] text-[8.5px] tracking-[0.16em]
+//                             uppercase text-white/25 mb-1">Delivery Address</p>
+//                           <p className="text-[12.5px] text-white/55 tracking-wide leading-snug">
+//                             {order.address}
+//                           </p>
+//                         </div>
+//                       </div>
+
+//                       <div className="flex items-center gap-2.5">
+//                         {order.status === 'Delivered' && (
+//                           <button className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-xl
+//                             font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+//                             bg-gradient-to-br from-red-600 to-red-700 text-white
+//                             shadow-[0_4px_20px_rgba(220,38,38,0.3)]
+//                             hover:from-red-500 hover:to-red-600 hover:-translate-y-0.5
+//                             transition-all duration-200">
+//                             <Star size={12} /> Leave Review
+//                           </button>
+//                         )}
+//                         {!['Delivered', 'Cancelled'].includes(order.status) && (
+//                           <button className="flex-1 inline-flex items-center justify-center gap-2 py-3 rounded-xl
+//                             font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+//                             border border-white/[0.09] text-white/35
+//                             hover:border-red-600/35 hover:text-red-400 hover:bg-red-600/[0.05]
+//                             transition-all duration-200">
+//                             <XCircle size={12} /> Cancel Order
+//                           </button>
+//                         )}
+//                       </div>
+//                     </div>
+//                   </div>
+//                 )}
+//               </div>
+//             )
+//           })}
+//         </div>
+//       </div>
+
+//       <Footer />
+//     </div>
+//   )
+// }
+
+
+import { useState, useMemo } from 'react'
 import {
-  Package, Clock, CheckCircle, Truck, MapPin, XCircle,
+  Package, Check, Clock, CheckCircle, Truck, MapPin, XCircle,
   ShoppingBag, ChevronDown, ChevronUp, Calendar, CreditCard,
-  Home, Hash, Star, ArrowRight, Search
+  Hash, Star, Search, Filter, ArrowRight, RotateCcw, FileText,
+  PackageCheck, Home
 } from 'lucide-react'
-// import api from '../config/service'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
 
 const STATUS_CONFIG = {
-  Pending:           { color: 'text-amber-300',   bg: 'bg-amber-400/10',   border: 'border-amber-400/30', icon: Clock,       step: 1 },
-  Confirmed:         { color: 'text-sky-300',     bg: 'bg-sky-400/10',     border: 'border-sky-400/30',   icon: CheckCircle, step: 2 },
-  Processing:        { color: 'text-violet-300',  bg: 'bg-violet-400/10',  border: 'border-violet-400/30',icon: Package,     step: 3 },
-  Shipped:           { color: 'text-cyan-300',    bg: 'bg-cyan-400/10',    border: 'border-cyan-400/30',  icon: Truck,       step: 4 },
-  'Out for Delivery':{ color: 'text-orange-300',  bg: 'bg-orange-400/10',  border: 'border-orange-400/30',icon: MapPin,      step: 5 },
-  Delivered:         { color: 'text-emerald-300', bg: 'bg-emerald-400/10', border: 'border-emerald-400/30',icon: Star,       step: 6 },
-  Cancelled:         { color: 'text-red-300',     bg: 'bg-red-500/10',     border: 'border-red-500/30',   icon: XCircle,     step: 0 },
+  Pending: { color: 'text-amber-400', bg: 'bg-amber-400/10', border: 'border-amber-400/25', icon: Clock, step: 1, label: 'Order Placed' },
+  Confirmed: { color: 'text-blue-400', bg: 'bg-blue-400/10', border: 'border-blue-400/25', icon: CheckCircle, step: 2, label: 'Confirmed' },
+  Shipped: { color: 'text-cyan-400', bg: 'bg-cyan-400/10', border: 'border-cyan-400/25', icon: Truck, step: 3, label: 'Shipped' },
+  Delivered: { color: 'text-emerald-400', bg: 'bg-emerald-400/10', border: 'border-emerald-400/25', icon: PackageCheck, step: 4, label: 'Delivered' },
+  Cancelled: { color: 'text-red-400', bg: 'bg-red-400/10', border: 'border-red-400/25', icon: XCircle, step: 0, label: 'Cancelled' },
 }
 
-const STEPS = ['Pending', 'Confirmed', 'Processing', 'Shipped', 'Out for Delivery', 'Delivered']
+const FILTER_OPTIONS = ['All', 'Pending', 'Confirmed', 'Shipped', 'Delivered', 'Cancelled']
+const PROGRESS_STEPS = [
+  { key: 'Pending', label: 'Order Placed', icon: ShoppingBag },
+  { key: 'Confirmed', label: 'Confirmed', icon: CheckCircle },
+  { key: 'Shipped', label: 'Shipped', icon: Truck },
+  { key: 'Delivered', label: 'Delivered', icon: Home },
+]
 
-const MOCK_ORDERS = [
+const ORDERS = [
   {
-    _id: 'ORD-2025-001',
-    createdAt: '2025-06-01T10:30:00Z',
-    status: 'Shipped',
-    paymentMethod: 'Cash on Delivery',
-    trackingNumber: 'TRK-789456123',
-    totalAmount: 12500,
-    deliveryAddress: { street: '14 Commerce Square', city: 'Karachi', province: 'Sindh', zip: '75000' },
-    products: [
-      { _id: 'p1', title: 'Wireless Noise-Cancelling Headphones', image: null, price: 8500, qty: 1 },
-      { _id: 'p2', title: 'USB-C Fast Charging Cable (2m)', image: null, price: 2000, qty: 2 },
+    id: 'ORD-78A2F1', status: 'Shipped', createdAt: '10 Jun 2025', eta: 'Arriving 16 Jun', total: 12499,
+    paymentMethod: 'Card', address: '221B Baker Street, London', tracking: 'TRK-9385-2210',
+    items: [
+      { name: 'Cyber Hoodie — Midnight Black', qty: 1, price: 4999, image: null },
+      { name: 'Neon Sneakers — Size 42', qty: 1, price: 7500, image: null },
     ],
   },
   {
-    _id: 'ORD-2025-002',
-    createdAt: '2025-05-28T14:15:00Z',
-    status: 'Delivered',
-    paymentMethod: 'Credit Card',
-    trackingNumber: 'TRK-456123789',
-    totalAmount: 4800,
-    deliveryAddress: { street: '22 Clifton Block 5', city: 'Karachi', province: 'Sindh', zip: '75600' },
-    products: [{ _id: 'p3', title: "Running Shoes — Men's Pro Series", image: null, price: 4800, qty: 1 }],
+    id: 'ORD-552C90', status: 'Delivered', createdAt: '22 May 2025', eta: 'Delivered 25 May', total: 3200,
+    paymentMethod: 'Cash on Delivery', address: 'Sector 17, Chandigarh', tracking: 'TRK-7741-0093',
+    items: [
+      { name: 'Tactical Cap — Olive Green', qty: 2, price: 1600, image: null },
+    ],
   },
   {
-    _id: 'ORD-2025-003',
-    createdAt: '2025-05-20T09:00:00Z',
-    status: 'Cancelled',
-    paymentMethod: 'Cash on Delivery',
-    trackingNumber: null,
-    totalAmount: 3200,
-    deliveryAddress: { street: '5 Garden Road', city: 'Lahore', province: 'Punjab', zip: '54000' },
-    products: [{ _id: 'p4', title: 'Skincare Essentials Gift Set', image: null, price: 3200, qty: 1 }],
+    id: 'ORD-119BB7', status: 'Pending', createdAt: '13 Jun 2025', eta: 'Processing', total: 899,
+    paymentMethod: 'UPI', address: 'MG Road, Bangalore', tracking: null,
+    items: [
+      { name: 'Carbon Fiber Wallet', qty: 1, price: 899, image: null },
+    ],
+  },
+  {
+    id: 'ORD-204AC3', status: 'Cancelled', createdAt: '05 Jun 2025', eta: 'Cancelled 06 Jun', total: 5400,
+    paymentMethod: 'Card', address: 'DHA Phase 6, Karachi', tracking: null,
+    items: [
+      { name: 'Wireless Mechanical Keyboard', qty: 1, price: 5400, image: null },
+    ],
   },
 ]
 
-function StatusBadge({ status }) {
-  const cfg = STATUS_CONFIG[status]
+const SectionEyebrow = ({ icon: Icon, text }) => (
+  <div className="inline-flex items-center gap-2 mb-4">
+    <div className="w-5 h-px bg-red-600/50" />
+    <Icon size={9} className="text-red-500" />
+    <span className="font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.22em] uppercase text-red-500/70">
+      {text}
+    </span>
+    <div className="w-5 h-px bg-red-600/50" />
+  </div>
+)
+
+const StatusBadge = ({ status }) => {
+  const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.Pending
   const Icon = cfg.icon
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider ${cfg.color} ${cfg.bg} ${cfg.border}`}>
-      <Icon className="h-3.5 w-3.5" />
+    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full
+      ${cfg.bg} ${cfg.border} border
+      font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.1em] uppercase ${cfg.color}`}>
+      <Icon size={10} strokeWidth={2} />
       {status}
     </span>
   )
 }
 
-function ProgressBar({ status }) {
-  const cfg = STATUS_CONFIG[status]
-  if (!cfg || status === 'Cancelled') return null
-  const currentStep = cfg.step
-  const pct = ((currentStep - 1) / (STEPS.length - 1)) * 100
-
-  return (
-    <div className="px-1 py-2">
-      <div className="relative">
-        <div className="absolute left-3 right-3 top-3 h-[2px] rounded-full bg-white/10" />
-        <div
-          className="absolute left-3 top-3 h-[2px] rounded-full bg-gradient-to-r from-red-500 via-rose-500 to-orange-400 transition-all duration-700"
-          style={{ width: `calc((100% - 1.5rem) * ${pct / 100})` }}
-        />
-        <div className="relative flex justify-between">
-          {STEPS.map((step, i) => {
-            const done = i + 1 <= currentStep
-            const active = i + 1 === currentStep
-            return (
-              <div key={step} className="flex flex-1 flex-col items-center gap-2">
-                <div
-                  className={`flex h-6 w-6 items-center justify-center rounded-full border text-[10px] font-bold transition-all ${
-                    done
-                      ? 'border-red-400 bg-red-500 text-white shadow-[0_0_12px_rgba(239,68,68,0.6)]'
-                      : 'border-white/15 bg-zinc-900 text-white/40'
-                  } ${active ? 'scale-110 ring-2 ring-red-500/40' : ''}`}
-                >
-                  {done ? <CheckCircle className="h-3.5 w-3.5" /> : i + 1}
-                </div>
-                <span className={`hidden text-center text-[10px] font-medium uppercase tracking-wider sm:block ${done ? 'text-white/80' : 'text-white/35'}`}>
-                  {step}
-                </span>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function SectionEyebrow({ icon: Icon, text }) {
-  return (
-    <div className="mb-3 flex items-center gap-2">
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-      <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
-        <Icon className="h-3 w-3 text-red-400" />
-        {text}
-      </div>
-      <div className="h-px flex-1 bg-gradient-to-r from-transparent via-white/15 to-transparent" />
-    </div>
-  )
-}
-
-export default function MyOrdersPage() {
-  const [orders, setOrders] = useState([])
-  const [loading, setLoading] = useState(true)
-  const [expanded, setExpanded] = useState(null)
+export default function Orders() {
+  const [expanded, setExpanded] = useState(ORDERS[0]?.id ?? null)
   const [filter, setFilter] = useState('All')
-  const [query, setQuery] = useState('')
+  const [search, setSearch] = useState('')
 
-  useEffect(() => {
-    // Replace this with your real API call:
-    // api.get('/orders').then(res => { setOrders(res.data); setLoading(false) })
-    const t = setTimeout(() => {
-      setOrders(MOCK_ORDERS)
-      setLoading(false)
-    }, 600)
-    return () => clearTimeout(t)
-  }, [])
+  const filtered = useMemo(() => ORDERS.filter((order) => {
+    const query = search.trim().toLowerCase()
+    return (filter === 'All' || order.status === filter) &&
+      (!query ||
+        order.id.toLowerCase().includes(query) ||
+        order.items.some((item) => item.name.toLowerCase().includes(query)))
+  }), [filter, search])
 
-  const toggle = (id) => setExpanded((e) => (e === id ? null : id))
+  const stats = [
+    { label: 'Total Orders', value: ORDERS.length, icon: ShoppingBag },
+    { label: 'In Transit', value: ORDERS.filter((o) => ['Confirmed', 'Shipped'].includes(o.status)).length, icon: Truck },
+    { label: 'Delivered', value: ORDERS.filter((o) => o.status === 'Delivered').length, icon: PackageCheck },
+    { label: 'Total Spent', value: `Rs. ${ORDERS.reduce((sum, o) => sum + o.total, 0).toLocaleString()}`, icon: CreditCard },
+  ]
 
-  const stats = {
-    total: orders.length,
-    active: orders.filter((o) => !['Delivered', 'Cancelled'].includes(o.status)).length,
-    delivered: orders.filter((o) => o.status === 'Delivered').length,
-    spent: orders.filter((o) => o.status !== 'Cancelled').reduce((s, o) => s + o.totalAmount, 0),
-  }
+  const toggle = (id) => setExpanded(e => e === id ? null : id)
 
-  const filtered = orders.filter((o) => {
-    const matchesFilter = filter === 'All' || o.status === filter
-    const q = query.trim().toLowerCase()
-    const matchesQuery =
-      !q ||
-      o._id.toLowerCase().includes(q) ||
-      o.products.some((p) => p.title.toLowerCase().includes(q))
-    return matchesFilter && matchesQuery
-  })
-
-  const filterChips = ['All', 'Pending', 'Processing', 'Shipped', 'Delivered', 'Cancelled']
+  const inputCls = `bg-white/[0.04] border border-white/[0.08] rounded-xl
+    text-white placeholder:text-white/20 tracking-wide
+    font-['Rajdhani',sans-serif] outline-none
+    focus:border-red-600/50 focus:ring-2 focus:ring-red-600/10
+    transition-all duration-200`
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#0a0a0c] text-white" style={{ fontFamily: "'Rajdhani', system-ui, sans-serif" }}>
-      {/* Ambient background */}
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute -left-32 -top-32 h-[420px] w-[420px] rounded-full bg-red-600/20 blur-[140px]" />
-        <div className="absolute -right-32 top-1/3 h-[420px] w-[420px] rounded-full bg-rose-500/10 blur-[140px]" />
-        <div className="absolute bottom-0 left-1/2 h-[360px] w-[600px] -translate-x-1/2 rounded-full bg-orange-500/5 blur-[140px]" />
-        <div
-          className="absolute inset-0 opacity-[0.025]"
-          style={{
-            backgroundImage:
-              'linear-gradient(rgba(255,255,255,0.6) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.6) 1px, transparent 1px)',
-            backgroundSize: '48px 48px',
-          }}
-        />
-      </div>
-
+    <div className="noise min-h-screen bg-[#05080a] font-['Rajdhani',sans-serif] text-white antialiased">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@500;700;900&display=swap');
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(12px) } to { opacity: 1; transform: none } }
-        .fade-up { animation: fadeUp .45s cubic-bezier(.2,.7,.2,1) both; }
-        @keyframes shimmer { 0% { background-position: -200% 0 } 100% { background-position: 200% 0 } }
-        .sk { background: linear-gradient(90deg, rgba(255,255,255,.04) 0%, rgba(255,255,255,.08) 50%, rgba(255,255,255,.04) 100%); background-size: 200% 100%; animation: shimmer 1.6s linear infinite; border-radius: 16px; }
-        .display { font-family: 'Orbitron', sans-serif; letter-spacing: .04em; }
+        @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .fade-in { animation: fadeIn 0.35s ease both; }
+        @keyframes ordFadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes ordPulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        .ord-fade { animation: ordFadeUp 0.4s ease both; }
+        .ord-pulse { animation: ordPulse 2s ease-in-out infinite; }
+        .ord-scroll::-webkit-scrollbar { height: 6px; }
+        .ord-scroll::-webkit-scrollbar-track { background: transparent; }
+        .ord-scroll::-webkit-scrollbar-thumb { background: #dc2626; border-radius: 3px; }
+        .noise::before {
+          content:'';position:fixed;inset:0;
+          background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+          pointer-events:none;z-index:0;opacity:0.35;
+        }
+        .noise::after {
+          content:'';position:fixed;top:-20%;left:-10%;width:50%;height:60%;
+          background:radial-gradient(ellipse,rgba(220,38,38,0.06) 0%,transparent 70%);
+          pointer-events:none;z-index:0;
+        }
       `}</style>
 
-      <div className="relative z-10 mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-        {/* Header */}
-        <header className="fade-up mb-10">
-          <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-[11px] uppercase tracking-[0.25em] text-white/60 backdrop-blur">
-            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-red-500" />
-            Order Center
-          </div>
-          <h1 className="display bg-gradient-to-b from-white to-white/60 bg-clip-text text-4xl font-black text-transparent sm:text-5xl">
-            My Orders
-          </h1>
-          <p className="mt-2 max-w-xl text-base text-white/55">
-            Track shipments, review past purchases and manage everything you've ordered — all in one place.
-          </p>
+      <Navbar />
 
-          {/* Stat cards */}
-          <div className="mt-7 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {[
-              { label: 'Total Orders', value: stats.total, icon: ShoppingBag, color: 'text-white' },
-              { label: 'In Transit', value: stats.active, icon: Truck, color: 'text-cyan-300' },
-              { label: 'Delivered', value: stats.delivered, icon: CheckCircle, color: 'text-emerald-300' },
-              { label: 'Total Spent', value: `Rs. ${stats.spent.toLocaleString()}`, icon: CreditCard, color: 'text-red-300' },
-            ].map((s) => {
-              const Ic = s.icon
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
+
+        {/* ── Header ── */}
+        <div className="mb-8 sm:mb-10 ord-fade">
+          <SectionEyebrow icon={ShoppingBag} text="Account · Order History" />
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+            <div>
+              <h1 className="font-['Orbitron',monospace] font-black text-[26px] sm:text-[36px]
+                text-white leading-none tracking-tight mb-3">
+                MY ORDERS
+              </h1>
+              <p className="text-[13px] sm:text-[14px] tracking-wide text-white/30">
+                Track shipments, view invoices, and manage your purchase history.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* ── Stats ── */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-8 ord-fade" style={{ animationDelay: '60ms' }}>
+          {stats.map(({ label, value, icon: Icon }) => (
+            <div key={label}
+              className="relative overflow-hidden bg-white/[0.025] border border-white/[0.07]
+                rounded-2xl p-4 sm:p-5 flex items-center gap-3.5 group
+                hover:border-red-600/25 hover:bg-red-600/[0.04] transition-all duration-300">
+              <div className="absolute top-0 left-0 right-0 h-px
+                bg-gradient-to-r from-transparent via-red-600/25 to-transparent" />
+
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl shrink-0 flex items-center justify-center
+                bg-red-600/10 border border-red-600/20 text-red-500
+                group-hover:bg-red-600/15 group-hover:border-red-600/35 transition-all duration-300">
+                <Icon size={15} strokeWidth={1.5} />
+              </div>
+              <div className="min-w-0">
+                <p className="font-['Orbitron',monospace] text-[15px] sm:text-[19px] font-black
+                  text-white leading-none mb-1 truncate">
+                  {value}
+                </p>
+                <p className="font-['Orbitron',monospace] text-[8px] tracking-[0.16em]
+                  uppercase text-white/25 truncate">
+                  {label}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* ── Search & Filter ── */}
+        <div className="flex flex-col sm:flex-row gap-3 mb-8 ord-fade" style={{ animationDelay: '120ms' }}>
+          <div className="relative flex-1">
+            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search order ID or product…"
+              className={`${inputCls} w-full pl-9 pr-4 py-3 text-[13px]`}
+            />
+          </div>
+
+          <div className="flex items-center gap-2 overflow-x-auto ord-scroll pb-1 sm:pb-0">
+            {FILTER_OPTIONS.map(option => {
+              const active = filter === option
               return (
-                <div key={s.label} className="group relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl transition hover:border-white/20 hover:bg-white/[0.05]">
-                  <div className="absolute -right-6 -top-6 h-20 w-20 rounded-full bg-red-500/10 blur-2xl transition group-hover:bg-red-500/20" />
-                  <div className="relative flex items-start justify-between">
-                    <div>
-                      <div className="text-[10px] font-semibold uppercase tracking-widest text-white/45">{s.label}</div>
-                      <div className={`display mt-1.5 text-xl font-bold sm:text-2xl ${s.color}`}>{s.value}</div>
-                    </div>
-                    <Ic className="h-4 w-4 text-white/40" />
-                  </div>
-                </div>
+                <button key={option}
+                  onClick={() => setFilter(option)}
+                  className={`shrink-0 inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl
+                    font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+                    border transition-all duration-200
+                    ${active
+                      ? 'bg-red-600/10 border-red-600/30 text-red-400'
+                      : 'bg-white/[0.03] border-white/[0.07] text-white/35 hover:text-white/60 hover:border-white/[0.14]'
+                    }`}>
+                  {option === 'All' && <Filter size={10} />}
+                  {option}
+                </button>
               )
             })}
           </div>
-        </header>
+        </div>
 
-        {/* Search + Filters */}
-        {!loading && orders.length > 0 && (
-          <div className="fade-up mb-6 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <div className="relative flex-1">
-              <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-white/40" />
-              <input
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search by order ID or product..."
-                className="w-full rounded-xl border border-white/10 bg-white/[0.03] py-2.5 pl-10 pr-4 text-sm text-white placeholder:text-white/35 backdrop-blur transition focus:border-red-500/50 focus:bg-white/[0.05] focus:outline-none focus:ring-2 focus:ring-red-500/20"
-              />
+        {/* ── Orders List ── */}
+        <div className="space-y-5">
+
+          {filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-24 gap-4
+              border border-dashed border-white/[0.07] rounded-3xl bg-white/[0.01]">
+              <div className="w-14 h-14 rounded-2xl bg-white/[0.03] border border-white/[0.07]
+                flex items-center justify-center">
+                <Package size={24} className="text-white/15" />
+              </div>
+              <div className="text-center">
+                <p className="font-['Orbitron',monospace] text-[12px] font-bold tracking-widest
+                  uppercase text-white/40 mb-2">No Orders Found</p>
+                <p className="text-[13px] text-white/20 tracking-wide">
+                  Try adjusting your filters or search.
+                </p>
+              </div>
             </div>
-            <div className="flex flex-wrap gap-2">
-              {filterChips.map((c) => {
-                const active = filter === c
-                return (
-                  <button
-                    key={c}
-                    onClick={() => setFilter(c)}
-                    className={`rounded-full border px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider transition ${
-                      active
-                        ? 'border-red-500/50 bg-red-500/15 text-red-200 shadow-[0_0_18px_rgba(239,68,68,0.25)]'
-                        : 'border-white/10 bg-white/[0.03] text-white/55 hover:border-white/25 hover:text-white'
-                    }`}
-                  >
-                    {c}
-                  </button>
-                )
-              })}
-            </div>
-          </div>
-        )}
+          ) : filtered.map((order, index) => {
+            const cfg = STATUS_CONFIG[order.status]
+            const isOpen = expanded === order.id
+            const itemCount = order.items.reduce((s, i) => s + i.qty, 0)
 
-        {/* Loading */}
-        {loading && (
-          <div className="space-y-4">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="sk h-28" />
-            ))}
-          </div>
-        )}
+            return (
+              <div key={order.id}
+                className="relative overflow-hidden bg-white/[0.025] border border-white/[0.07]
+                  rounded-2xl transition-all duration-300 hover:border-white/[0.11] ord-fade"
+                style={{ animationDelay: `${index * 60}ms` }}>
 
-        {/* Empty */}
-        {!loading && filtered.length === 0 && (
-          <div className="fade-up rounded-3xl border border-white/10 bg-white/[0.02] p-12 text-center backdrop-blur-xl">
-            <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-full border border-white/10 bg-gradient-to-br from-red-500/15 to-rose-500/5">
-              <ShoppingBag className="h-9 w-9 text-red-300" />
-            </div>
-            <h2 className="display text-2xl font-bold text-white">
-              {orders.length === 0 ? 'No Orders Yet' : 'No Matching Orders'}
-            </h2>
-            <p className="mx-auto mt-2 max-w-md text-sm text-white/55">
-              {orders.length === 0
-                ? "You haven't placed any orders yet. Start exploring our catalog and your purchases will appear here."
-                : "Try adjusting your filters or search query to find what you're looking for."}
-            </p>
-            <button className="mt-6 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-red-600 to-rose-600 px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-white shadow-[0_10px_30px_-10px_rgba(239,68,68,0.7)] transition hover:scale-[1.02] hover:shadow-[0_14px_36px_-10px_rgba(239,68,68,0.9)]">
-              <ShoppingBag className="h-4 w-4" />
-              Browse Products
-              <ArrowRight className="h-4 w-4" />
-            </button>
-          </div>
-        )}
+                <div className="absolute top-0 left-0 right-0 h-px
+                  bg-gradient-to-r from-transparent via-red-600/25 to-transparent" />
 
-        {/* Order list */}
-        {!loading && filtered.length > 0 && (
-          <div className="space-y-4">
-            {filtered.map((order, idx) => {
-              const isOpen = expanded === order._id
-              const date = new Date(order.createdAt).toLocaleDateString('en-PK', {
-                day: 'numeric',
-                month: 'short',
-                year: 'numeric',
-              })
-              const itemCount = order.products.reduce((s, p) => s + p.qty, 0)
+                {/* ── Order Strip Header — receipt style ── */}
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3 px-5 sm:px-6 py-4
+                  border-b border-white/[0.05] bg-white/[0.012]">
+                  <div className="flex items-center gap-2">
+                    <Hash size={10} className="text-red-500" />
+                    <div>
+                      <p className="font-['Orbitron',monospace] text-[8px] tracking-[0.16em] uppercase text-white/25 leading-none mb-0.5">
+                        Order
+                      </p>
+                      <p className="font-['Orbitron',monospace] text-[11px] font-bold tracking-[0.08em] text-white">
+                        {order.id}
+                      </p>
+                    </div>
+                  </div>
 
-              return (
-                <article
-                  key={order._id}
-                  className="fade-up group relative overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-white/[0.015] backdrop-blur-xl transition hover:border-white/20"
-                  style={{ animationDelay: `${idx * 60}ms` }}
-                >
-                  <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-red-500/40 to-transparent opacity-0 transition group-hover:opacity-100" />
+                  <div className="flex items-center gap-2">
+                    <Calendar size={10} className="text-white/20" />
+                    <div>
+                      <p className="font-['Orbitron',monospace] text-[8px] tracking-[0.16em] uppercase text-white/25 leading-none mb-0.5">
+                        Placed On
+                      </p>
+                      <p className="text-[12px] text-white/55 tracking-wide">{order.createdAt}</p>
+                    </div>
+                  </div>
 
-                  {/* Card Header */}
-                  <button
-                    onClick={() => toggle(order._id)}
-                    className="flex w-full flex-col gap-4 px-5 py-5 text-left sm:flex-row sm:items-center sm:justify-between sm:px-6"
-                  >
-                    <div className="flex flex-1 flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
-                      {/* Order ID + Date */}
-                      <div className="space-y-1">
-                        <div className="flex items-center gap-2">
-                          <Hash className="h-3.5 w-3.5 text-red-400" />
-                          <span className="display text-sm font-bold tracking-wider text-white">{order._id}</span>
-                        </div>
-                        <div className="flex items-center gap-1.5 text-xs text-white/45">
-                          <Calendar className="h-3 w-3" />
-                          {date}
-                          <span className="mx-1.5 text-white/20">•</span>
-                          <span>
-                            {itemCount} {itemCount === 1 ? 'item' : 'items'}
-                          </span>
-                        </div>
+                  <div className="flex items-center gap-2">
+                    <CreditCard size={10} className="text-white/20" />
+                    <div>
+                      <p className="font-['Orbitron',monospace] text-[8px] tracking-[0.16em] uppercase text-white/25 leading-none mb-0.5">
+                        Payment
+                      </p>
+                      <p className="text-[12px] text-white/55 tracking-wide">{order.paymentMethod}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 ml-auto">
+                    <div className="text-right">
+                      <p className="font-['Orbitron',monospace] text-[8px] tracking-[0.16em] uppercase text-white/25 leading-none mb-0.5">
+                        Order Total
+                      </p>
+                      <p className="font-['Orbitron',monospace] text-[14px] font-black text-white">
+                        Rs. {order.total.toLocaleString()}
+                      </p>
+                    </div>
+                    <StatusBadge status={order.status} />
+                  </div>
+                </div>
+
+                {/* ── Body: products + image preview ── */}
+                <div className="p-5 sm:p-6">
+                  <div className="flex flex-col lg:flex-row gap-6">
+
+                    {/* Product thumbnails + summary */}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 flex-wrap mb-4">
+                        {order.items.slice(0, 4).map((item, i) => (
+                          <div key={i}
+                            className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl shrink-0 overflow-hidden
+                              bg-white/[0.04] border border-white/[0.07] flex items-center justify-center relative">
+                            {item.image
+                              ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                              : <Package size={20} className="text-white/15" />
+                            }
+                            {item.qty > 1 && (
+                              <span className="absolute bottom-1 right-1 px-1.5 py-0.5 rounded-md
+                                bg-black/70 font-['Orbitron',monospace] text-[8px] font-bold text-white/70">
+                                ×{item.qty}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                        {order.items.length > 4 && (
+                          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl shrink-0
+                            bg-white/[0.02] border border-dashed border-white/[0.1]
+                            flex items-center justify-center
+                            font-['Orbitron',monospace] text-[11px] font-bold text-white/30">
+                            +{order.items.length - 4}
+                          </div>
+                        )}
                       </div>
 
-                      {/* Status */}
-                      <div className="sm:ml-auto">
-                        <StatusBadge status={order.status} />
-                      </div>
+                      <p className="text-[13px] text-white/45 tracking-wide leading-relaxed">
+                        <span className="text-white font-semibold">{order.items[0].name}</span>
+                        {order.items.length > 1 && (
+                          <> and <span className="text-white/60">{order.items.length - 1} other item{order.items.length > 2 ? 's' : ''}</span></>
+                        )}
+                        {' '}· {itemCount} unit{itemCount > 1 ? 's' : ''} total
+                      </p>
 
-                      {/* Total */}
-                      <div className="flex items-center gap-2">
-                        <div className="text-[10px] uppercase tracking-widest text-white/40">Total</div>
-                        <div className="display text-lg font-bold text-white">
-                          Rs. {order.totalAmount?.toLocaleString()}
-                        </div>
-                      </div>
+                      {/* ETA / cancellation note */}
+                      <p className={`mt-2 inline-flex items-center gap-1.5 font-['Orbitron',monospace]
+                        text-[9px] font-bold tracking-[0.12em] uppercase ${cfg.color}`}>
+                        <cfg.icon size={11} />
+                        {order.eta}
+                      </p>
                     </div>
 
-                    <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/[0.03] text-white/60 transition group-hover:border-red-500/40 group-hover:text-red-300">
-                      {isOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                    </div>
-                  </button>
+                    {/* ── Tracking Timeline ── */}
+                    {order.status !== 'Cancelled' && (
+                      <div className="lg:w-[340px] shrink-0 lg:pl-6 lg:border-l border-white/[0.05]">
+                        <p className="font-['Orbitron',monospace] text-[8.5px] tracking-[0.18em]
+                          uppercase text-white/25 mb-4">Shipment Progress</p>
 
-                  {/* Expanded */}
-                  {isOpen && (
-                    <div className="fade-up border-t border-white/5 px-5 pb-6 pt-2 sm:px-6">
-                      {/* Progress */}
-                      <div className="mb-6">
-                        <SectionEyebrow icon={Truck} text="Order Progress" />
-                        <ProgressBar status={order.status} />
-                      </div>
-
-                      {/* Products */}
-                      <SectionEyebrow icon={Package} text="Items Ordered" />
-                      <div className="mb-6 space-y-2">
-                        {order.products.map((item) => (
+                        <div className="relative">
+                          {/* vertical connecting line */}
+                          <div className="absolute left-[13px] top-2 bottom-2 w-px bg-white/[0.06]" />
                           <div
-                            key={item._id}
-                            className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/[0.02] p-3 transition hover:border-white/15 hover:bg-white/[0.04]"
-                          >
-                            <div className="flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-white/10 bg-gradient-to-br from-white/[0.06] to-white/[0.01]">
-                              {item.image ? (
-                                <img src={item.image} alt={item.title} className="h-full w-full object-cover" />
-                              ) : (
-                                <Package className="h-6 w-6 text-white/30" />
-                              )}
+                            className="absolute left-[13px] top-2 w-px bg-gradient-to-b from-red-600 to-red-400/40 transition-all duration-700"
+                            style={{ height: `${(Math.max(cfg.step - 1, 0) / (PROGRESS_STEPS.length - 1)) * 100}%` }}
+                          />
+
+                          <div className="space-y-4">
+                            {PROGRESS_STEPS.map((step, i) => {
+                              const reached = cfg.step >= i + 1
+                              const active = cfg.step === i + 1
+                              const StepIcon = step.icon
+                              return (
+                                <div key={step.key} className="flex items-center gap-3 relative z-10">
+                                  <div className={`w-7 h-7 rounded-full border-2 shrink-0 flex items-center justify-center
+                                    transition-all duration-300
+                                    ${active
+                                      ? 'bg-red-600 border-red-500 text-white shadow-[0_0_12px_rgba(220,38,38,0.5)]'
+                                      : reached
+                                        ? 'bg-red-600/30 border-red-600/60 text-red-300'
+                                        : 'bg-[#05080a] border-white/[0.1] text-white/20'
+                                    }`}>
+                                    {reached ? <Check size={11} /> : <StepIcon size={11} />}
+                                  </div>
+                                  <span className={`font-['Rajdhani',sans-serif] text-[12.5px] font-semibold tracking-wide
+                                    ${active ? 'text-red-400' : reached ? 'text-white/55' : 'text-white/20'}`}>
+                                    {step.label}
+                                  </span>
+                                </div>
+                              )
+                            })}
+                          </div>
+                        </div>
+
+                        {order.tracking && (
+                          <div className="mt-4 pt-4 border-t border-white/[0.05] flex items-center justify-between">
+                            <span className="text-[11px] text-white/25 tracking-wide">Tracking ID</span>
+                            <span className="font-['Orbitron',monospace] text-[10px] font-bold text-cyan-400 tracking-wide">
+                              {order.tracking}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* ── Action Bar ── */}
+                  <div className="mt-5 pt-5 border-t border-white/[0.05] flex flex-col sm:flex-row
+                    items-center justify-between gap-3">
+                    <button
+                      onClick={() => toggle(order.id)}
+                      className="inline-flex items-center gap-2
+                        font-['Orbitron',monospace] text-[9px] tracking-[0.2em] uppercase
+                        text-white/30 hover:text-white/60 transition-colors duration-200">
+                      {isOpen ? 'Hide Full Invoice' : 'View Full Invoice'}
+                      {isOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+                    </button>
+
+                    <div className="flex items-center gap-2.5 w-full sm:w-auto">
+                      {order.status === 'Delivered' && (
+                        <button className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+                          font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+                          bg-gradient-to-br from-red-600 to-red-700 text-white
+                          shadow-[0_4px_20px_rgba(220,38,38,0.3)]
+                          hover:from-red-500 hover:to-red-600 hover:-translate-y-0.5
+                          transition-all duration-200">
+                          <Star size={12} /> Leave Review
+                        </button>
+                      )}
+                      {order.status === 'Shipped' && (
+                        <button className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+                          font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+                          bg-gradient-to-br from-red-600 to-red-700 text-white
+                          shadow-[0_4px_20px_rgba(220,38,38,0.3)]
+                          hover:from-red-500 hover:to-red-600 hover:-translate-y-0.5
+                          transition-all duration-200">
+                          <Truck size={12} /> Track Package <ArrowRight size={11} />
+                        </button>
+                      )}
+                      {order.status === 'Cancelled' && (
+                        <button className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+                          border border-white/[0.09] text-white/35
+                          font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+                          hover:border-red-600/35 hover:text-red-400 hover:bg-red-600/[0.05]
+                          transition-all duration-200">
+                          <RotateCcw size={12} /> Reorder
+                        </button>
+                      )}
+                      {!['Delivered', 'Cancelled'].includes(order.status) && (
+                        <button className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+                          border border-white/[0.09] text-white/35
+                          font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+                          hover:border-red-600/35 hover:text-red-400 hover:bg-red-600/[0.05]
+                          transition-all duration-200">
+                          <XCircle size={12} /> Cancel
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── Expanded Invoice ── */}
+                {isOpen && (
+                  <div className="px-5 sm:px-6 pb-6 -mt-1">
+                    <div className="rounded-2xl bg-white/[0.02] border border-white/[0.05] p-5">
+
+                      <div className="flex items-center gap-2 mb-4">
+                        <FileText size={11} className="text-red-500" />
+                        <p className="font-['Orbitron',monospace] text-[9px] tracking-[0.18em]
+                          uppercase text-white/30">Invoice Breakdown</p>
+                      </div>
+
+                      {/* Line items */}
+                      <div className="space-y-2.5 mb-4">
+                        {order.items.map((item, i) => (
+                          <div key={i} className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-lg shrink-0 flex items-center justify-center
+                              bg-white/[0.04] border border-white/[0.07]">
+                              <Package size={15} className="text-white/15" />
                             </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="truncate text-sm font-semibold text-white">{item.title}</div>
-                              <div className="mt-0.5 text-xs text-white/45">
-                                Qty {item.qty} · Rs. {item.price?.toLocaleString()} each
-                              </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-[13px] font-semibold text-white truncate tracking-wide">
+                                {item.name}
+                              </p>
+                              <p className="text-[11.5px] text-white/30 mt-0.5">
+                                Rs. {item.price.toLocaleString()} × {item.qty}
+                              </p>
                             </div>
-                            <div className="display shrink-0 text-sm font-bold text-white">
-                              Rs. {(item.price * item.qty)?.toLocaleString()}
+                            <div className="shrink-0 font-['Orbitron',monospace] text-[12px] font-bold text-white/70">
+                              Rs. {(item.price * item.qty).toLocaleString()}
                             </div>
                           </div>
                         ))}
                       </div>
 
-                      {/* Footer grid */}
-                      <div className="grid gap-3 sm:grid-cols-3">
-                        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
-                          <div className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-white/45">
-                            <CreditCard className="h-3 w-3 text-red-400" />
-                            Payment
+                      <div className="h-px bg-white/[0.06] mb-4" />
+
+                      {/* Totals + Address */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-2">
+                            <MapPin size={10} className="text-red-500" />
+                            <p className="font-['Orbitron',monospace] text-[8.5px] tracking-[0.16em]
+                              uppercase text-white/25">Shipping Address</p>
                           </div>
-                          <div className="text-sm font-semibold text-white">{order.paymentMethod}</div>
-                          <div className="display mt-1 text-lg font-bold text-red-300">
-                            Rs. {order.totalAmount?.toLocaleString()}
-                          </div>
+                          <p className="text-[12.5px] text-white/50 tracking-wide leading-snug">
+                            {order.address}
+                          </p>
                         </div>
 
-                        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
-                          <div className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-white/45">
-                            <Home className="h-3 w-3 text-red-400" />
-                            Delivery To
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between text-[12.5px]">
+                            <span className="text-white/30 tracking-wide">Subtotal</span>
+                            <span className="text-white/60 font-['Rajdhani',sans-serif] font-semibold">
+                              Rs. {order.total.toLocaleString()}
+                            </span>
                           </div>
-                          <div className="text-sm font-medium text-white/85">{order.deliveryAddress?.street}</div>
-                          <div className="text-xs text-white/50">
-                            {order.deliveryAddress?.city}, {order.deliveryAddress?.province} {order.deliveryAddress?.zip}
+                          <div className="flex items-center justify-between text-[12.5px]">
+                            <span className="text-white/30 tracking-wide">Shipping</span>
+                            <span className="text-emerald-400 font-['Rajdhani',sans-serif] font-semibold">Free</span>
+                          </div>
+                          <div className="h-px bg-white/[0.06] my-1.5" />
+                          <div className="flex items-center justify-between">
+                            <span className="font-['Orbitron',monospace] text-[9px] tracking-[0.16em] uppercase text-white/40">
+                              Total
+                            </span>
+                            <span className="font-['Orbitron',monospace] text-[15px] font-black text-white">
+                              Rs. {order.total.toLocaleString()}
+                            </span>
                           </div>
                         </div>
-
-                        <div className="rounded-xl border border-white/5 bg-white/[0.02] p-4">
-                          <div className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-white/45">
-                            <Truck className="h-3 w-3 text-red-400" />
-                            Tracking
-                          </div>
-                          {order.trackingNumber ? (
-                            <>
-                              <div className="display text-sm font-bold text-white">{order.trackingNumber}</div>
-                              <button className="mt-1.5 inline-flex items-center gap-1 text-xs font-semibold text-red-300 hover:text-red-200">
-                                Track shipment <ArrowRight className="h-3 w-3" />
-                              </button>
-                            </>
-                          ) : (
-                            <div className="text-sm text-white/50">Not assigned yet</div>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Actions */}
-                      <div className="mt-5 flex flex-wrap gap-2">
-                        <button className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 text-xs font-semibold uppercase tracking-wider text-white/80 transition hover:border-white/25 hover:bg-white/[0.08]">
-                          View Invoice
-                        </button>
-                        {order.status === 'Delivered' && (
-                          <button className="inline-flex items-center gap-1.5 rounded-full bg-gradient-to-r from-red-600 to-rose-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-[0_8px_24px_-8px_rgba(239,68,68,0.6)] transition hover:scale-[1.02]">
-                            <Star className="h-3.5 w-3.5" />
-                            Leave Review
-                          </button>
-                        )}
-                        {!['Delivered', 'Cancelled'].includes(order.status) && (
-                          <button className="inline-flex items-center gap-1.5 rounded-full border border-red-500/30 bg-red-500/10 px-4 py-2 text-xs font-semibold uppercase tracking-wider text-red-300 transition hover:bg-red-500/20">
-                            Cancel Order
-                          </button>
-                        )}
                       </div>
                     </div>
-                  )}
-                </article>
-              )
-            })}
-          </div>
-        )}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
       </div>
+
+      <Footer />
     </div>
   )
 }
