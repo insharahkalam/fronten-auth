@@ -236,14 +236,14 @@ export default function ProductCard({ product, index = 0 }) {
                                 <><ShoppingCart size={13} /> {inStock ? 'ADD TO CART' : 'OUT OF STOCK'}</>
                             )}
                         </button>
-                        <button
-                            type="button"
-                            onClick={(e) => e.stopPropagation()}
-                            aria-label="Quick view"
-                            className="w-10 h-10 rounded-md flex items-center justify-center bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white hover:border-white/25 transition-all"
-                        >
-                            <Eye size={14} />
-                        </button>
+                        <Link to={`/product/${_id}`}>
+                            <button
+                                type="button"
+                                aria-label="Quick view"
+                                className="w-10 h-10 rounded-md flex items-center justify-center bg-white/5 border border-white/10 text-white/70 hover:bg-white/10 hover:text-white hover:border-white/25 transition-all"
+                            >
+                                <Eye size={14} />
+                            </button></Link>
                     </div>
                 </div>
 
