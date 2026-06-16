@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react'
 import {
-    Package, Search, Filter, Eye, ChevronDown, ChevronUp,
-    Truck, CheckCircle, Clock, XCircle, RefreshCw,
+    Package, Search, Eye, Truck, CheckCircle, Clock, XCircle, RefreshCw,
     MapPin, Phone, Mail, Calendar, DollarSign,
-    ArrowUpRight, LayoutGrid, TrendingUp, ShieldCheck,
-    User, Box, Hash, SlidersHorizontal, X, Download,
+    TrendingUp, ShieldCheck, User, Box, SlidersHorizontal, X,
     ChevronLeft, ChevronRight, AlertCircle, Loader2
 } from 'lucide-react'
 import api from '../config/service'
@@ -48,7 +46,58 @@ const STATUS_CONFIG = {
     },
 }
 
-const ALL_STATUSES = ['all', 'pending', 'processing', 'shipped', 'delivered', 'cancelled']
+// ── TEMP: fake sample data — REMOVE this block once API is confirmed working ──
+const FAKE_ORDERS = [
+    {
+        _id: 'a1b2c3d4e5f6', orderNumber: 'OD2031', status: 'pending', createdAt: '2026-06-12T10:30:00Z',
+        customer: { name: 'Ahmed Raza', email: 'ahmed@gmail.com' },
+        items: [{ name: 'Wireless Mouse', quantity: 2, price: 2500, image: '' }, { name: 'USB-C Hub', quantity: 1, price: 7500, image: '' }],
+        totalAmount: 12500, subtotal: 12000, shippingFee: 500, paymentMethod: 'COD', paymentStatus: 'Pending',
+        shippingAddress: { fullName: 'Ahmed Raza', city: 'Karachi', province: 'Sindh', postalCode: '74200', address: 'House 12, Block 4, Gulshan-e-Iqbal', phone: '0300-1234567' }
+    },
+
+    {
+        _id: 'b2c3d4e5f6a1', orderNumber: 'OD2030', status: 'processing', createdAt: '2026-06-11T14:15:00Z',
+        customer: { name: 'Sara Khan', email: 'sara.khan@yahoo.com' },
+        items: [{ name: 'Bluetooth Speaker', quantity: 1, price: 4200, image: '' }],
+        totalAmount: 4200, subtotal: 4200, shippingFee: 0, paymentMethod: 'Card', paymentStatus: 'Paid',
+        shippingAddress: { fullName: 'Sara Khan', city: 'Lahore', province: 'Punjab', postalCode: '54000', address: 'Flat 7, Model Town', phone: '0312-9876543' }
+    },
+
+    {
+        _id: 'c3d4e5f6a1b2', orderNumber: 'OD2029', status: 'shipped', createdAt: '2026-06-10T09:00:00Z',
+        customer: { name: 'Bilal Hussain', email: 'bilal.h@outlook.com' },
+        items: [{ name: 'Gaming Keyboard', quantity: 1, price: 18900, image: '' }, { name: 'Mouse Pad', quantity: 2, price: 1000, image: '' }],
+        totalAmount: 38900, subtotal: 38400, shippingFee: 500, paymentMethod: 'COD', paymentStatus: 'Pending',
+        shippingAddress: { fullName: 'Bilal Hussain', city: 'Islamabad', province: 'Federal', postalCode: '44000', address: 'Street 5, F-10', phone: '0321-1122334' }
+    },
+
+    {
+        _id: 'd4e5f6a1b2c3', orderNumber: 'OD2028', status: 'delivered', createdAt: '2026-06-09T16:45:00Z',
+        customer: { name: 'Fatima Noor', email: 'fatima.n@gmail.com' },
+        items: [{ name: 'Laptop Stand', quantity: 1, price: 5500, image: '' }, { name: 'Webcam HD', quantity: 1, price: 8250, image: '' }, { name: 'Cable Organizer', quantity: 2, price: 1000, image: '' }, { name: 'Desk Mat', quantity: 1, price: 6000, image: '' }],
+        totalAmount: 21750, subtotal: 21750, shippingFee: 0, paymentMethod: 'Card', paymentStatus: 'Paid',
+        shippingAddress: { fullName: 'Fatima Noor', city: 'Karachi', province: 'Sindh', postalCode: '75500', address: 'Plot 22, DHA Phase 5', phone: '0333-4455667' }
+    },
+
+    {
+        _id: 'e5f6a1b2c3d4', orderNumber: 'OD2027', status: 'delivered', createdAt: '2026-06-08T11:20:00Z',
+        customer: { name: 'Usman Tariq', email: 'usman.t@hotmail.com' },
+        items: [{ name: 'Phone Case', quantity: 1, price: 6300, image: '' }],
+        totalAmount: 6300, subtotal: 6300, shippingFee: 0, paymentMethod: 'COD', paymentStatus: 'Paid',
+        shippingAddress: { fullName: 'Usman Tariq', city: 'Faisalabad', province: 'Punjab', postalCode: '38000', address: 'Madina Town', phone: '0345-7788990' }
+    },
+
+    {
+        _id: 'f6a1b2c3d4e5', orderNumber: 'OD2026', status: 'cancelled', createdAt: '2026-06-07T08:10:00Z',
+        customer: { name: 'Hina Aslam', email: 'hina.aslam@gmail.com' },
+        items: [{ name: 'Power Bank', quantity: 1, price: 9100, image: '' }],
+        totalAmount: 9100, subtotal: 9100, shippingFee: 0, paymentMethod: 'Card', paymentStatus: 'Refunded',
+        shippingAddress: { fullName: 'Hina Aslam', city: 'Karachi', province: 'Sindh', postalCode: '74600', address: 'Block 13-A, Gulistan-e-Jauhar', phone: '0301-5566778' }
+    },
+]
+const USE_FAKE_DATA = true
+// ── END TEMP block ──
 
 // ── Helpers ────────────────────────────────────────────────
 const fmt = (n) =>
@@ -82,7 +131,9 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
     const handleStatus = async (newStatus) => {
         setUpdating(true)
         try {
-            await api.put(`/orders/${order._id}/status`, { status: newStatus })
+            if (!USE_FAKE_DATA) {
+                await api.put(`/orders/${order._id}/status`, { status: newStatus })
+            }
             setCurrentStatus(newStatus)
             onStatusChange(order._id, newStatus)
         } catch (e) {
@@ -98,11 +149,9 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
             <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/[0.08]"
                 style={{ background: '#08080a' }}>
 
-                {/* Glow */}
                 <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full pointer-events-none"
                     style={{ background: 'radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 70%)' }} />
 
-                {/* Header */}
                 <div className="relative flex items-start justify-between p-6 border-b border-white/[0.06]">
                     <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -128,7 +177,6 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
 
                 <div className="relative p-6 space-y-5">
 
-                    {/* Customer Info */}
                     <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
                         <div className="flex items-center gap-2 mb-4">
                             <User size={13} className="text-red-500" />
@@ -152,7 +200,6 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                         )}
                     </div>
 
-                    {/* Products */}
                     <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
                         <div className="flex items-center gap-2 mb-4">
                             <Box size={13} className="text-red-500" />
@@ -185,7 +232,6 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                             ))}
                         </div>
 
-                        {/* Totals */}
                         <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-2">
                             {order.subtotal && (
                                 <div className="flex justify-between text-[12px] text-white/40">
@@ -205,7 +251,6 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                         </div>
                     </div>
 
-                    {/* Payment */}
                     <div className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
                         <div className="flex items-center gap-2 mb-3">
                             <ShieldCheck size={13} className="text-red-500" />
@@ -219,7 +264,6 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                         </div>
                     </div>
 
-                    {/* Update Status */}
                     <div className="rounded-2xl border border-red-600/20 bg-red-600/[0.04] p-5">
                         <div className="flex items-center gap-2 mb-4">
                             <SlidersHorizontal size={13} className="text-red-500" />
@@ -269,93 +313,29 @@ const InfoRow = ({ icon: Icon, label, value }) => (
     </div>
 )
 
-// ── Order Row / Card ───────────────────────────────────────
-const OrderRow = ({ order, onView }) => {
-    const firstItem = order.items?.[0]
-
-    return (
-        <div className="group relative flex flex-col sm:flex-row sm:items-center gap-4 p-4 sm:p-5
-            rounded-2xl border border-white/[0.06] bg-white/[0.015]
-            hover:border-red-600/25 hover:bg-red-600/[0.03]
-            transition-all duration-200">
-
-            {/* Product thumbnail(s) */}
-            <div className="flex -space-x-2 shrink-0">
-                {order.items?.slice(0, 3).map((item, i) => (
-                    <div key={i} className="w-12 h-12 rounded-xl border-2 border-[#08080a] overflow-hidden bg-white/[0.05]"
-                        style={{ zIndex: 3 - i }}>
-                        {item.image
-                            ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                            : <div className="w-full h-full flex items-center justify-center"><Package size={14} className="text-white/20" /></div>
-                        }
-                    </div>
-                ))}
-                {order.items?.length > 3 && (
-                    <div className="w-12 h-12 rounded-xl border-2 border-[#08080a] bg-white/[0.05]
-                        flex items-center justify-center font-['Orbitron',monospace] text-[9px] text-white/40">
-                        +{order.items.length - 3}
-                    </div>
-                )}
-            </div>
-
-            {/* Main info */}
-            <div className="flex-1 min-w-0">
-                <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-1">
-                    <span className="font-['Orbitron',monospace] text-[11px] font-bold text-white tracking-wider">
-                        #{order.orderNumber ?? order._id?.slice(-6).toUpperCase()}
-                    </span>
-                    <StatusBadge status={order.status} />
-                </div>
-                <p className="text-[13px] text-white/70 truncate font-medium">
-                    {order.customer?.name ?? order.shippingAddress?.fullName ?? 'Customer'}
-                </p>
-                <p className="text-[12px] text-white/35 mt-0.5 truncate">
-                    {order.items?.length ?? 0} item{order.items?.length !== 1 ? 's' : ''} ·{' '}
-                    {firstItem?.name}{order.items?.length > 1 ? ` +${order.items.length - 1} more` : ''}
-                </p>
-            </div>
-
-            {/* Meta */}
-            <div className="flex sm:flex-col items-center sm:items-end gap-4 sm:gap-1 shrink-0">
-                <div className="font-['Orbitron',monospace] text-[15px] font-black text-white">
-                    {fmt(order.totalAmount ?? order.total ?? 0)}
-                </div>
-                <div className="flex items-center gap-1.5 text-white/30 text-[11px]">
-                    <Calendar size={11} />
-                    {fmtDate(order.createdAt)}
-                </div>
-            </div>
-
-            {/* View button */}
-            <button onClick={() => onView(order)}
-                className="shrink-0 w-9 h-9 rounded-xl border border-white/[0.07]
-                flex items-center justify-center text-white/35
-                hover:border-red-600/40 hover:text-red-400 hover:bg-red-600/[0.06]
-                transition-all duration-200">
-                <Eye size={15} />
-            </button>
-        </div>
-    )
-}
-
-// ── Stat Card ──────────────────────────────────────────────
+// ── Stat Card (compact) ─────────────────────────────────────
 const StatCard = ({ icon: Icon, label, value, sub, accent }) => (
-    <div className="relative flex flex-col justify-between p-5 rounded-2xl border border-white/[0.06] bg-white/[0.015]
-        hover:border-red-600/20 hover:bg-red-600/[0.03] transition-all duration-200 group overflow-hidden">
-        <div className="absolute -top-8 -right-8 w-24 h-24 rounded-full pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            style={{ background: 'radial-gradient(circle, rgba(220,38,38,0.12) 0%, transparent 70%)' }} />
-        <div className="flex items-center justify-between mb-4">
-            <div className="w-9 h-9 rounded-xl bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500">
-                <Icon size={15} />
-            </div>
-            {accent && <span className="font-['Orbitron',monospace] text-[9px] tracking-widest text-emerald-400">{accent}</span>}
+    <div className="relative flex items-center gap-3 p-4 rounded-xl border border-white/[0.06] bg-white/[0.015]
+        hover:border-red-600/20 hover:bg-red-600/[0.03] transition-all duration-200">
+        <div className="w-9 h-9 rounded-lg bg-red-600/10 border border-red-600/20 flex items-center justify-center text-red-500 shrink-0">
+            <Icon size={15} />
         </div>
-        <div>
-            <div className="font-['Orbitron',monospace] text-[26px] font-black text-white leading-none mb-1">{value}</div>
-            <div className="text-[12px] text-white/40 tracking-wide">{label}</div>
-            {sub && <div className="text-[11px] text-white/25 mt-0.5">{sub}</div>}
+        <div className="min-w-0">
+            <div className="flex items-center gap-2">
+                <span className="font-['Orbitron',monospace] text-[18px] font-black text-white leading-none">{value}</span>
+                {accent && <span className="font-['Orbitron',monospace] text-[8px] tracking-widest text-emerald-400">{accent}</span>}
+            </div>
+            <div className="text-[11px] text-white/40 tracking-wide truncate">{label}</div>
+            {sub && <div className="text-[10px] text-white/25">{sub}</div>}
         </div>
     </div>
+)
+
+// ── Table column header ──────────────────────────────────────
+const Th = ({ children, className = '' }) => (
+    <th className={`px-4 py-3 text-left font-['Orbitron',monospace] text-[10px] font-bold tracking-[0.18em] uppercase text-white/35 ${className}`}>
+        {children}
+    </th>
 )
 
 // ── MAIN PAGE ──────────────────────────────────────────────
@@ -364,7 +344,6 @@ export default function AdminOrders() {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const [search, setSearch] = useState('')
-    const [statusFilter, setStatusFilter] = useState('all')
     const [selectedOrder, setSelectedOrder] = useState(null)
     const [page, setPage] = useState(1)
     const PER_PAGE = 10
@@ -376,6 +355,17 @@ export default function AdminOrders() {
     const fetchOrders = async () => {
         setLoading(true)
         setError(null)
+
+        // ── TEMP: serve fake data instead of hitting the API ──
+        if (USE_FAKE_DATA) {
+            setTimeout(() => {
+                setOrders(FAKE_ORDERS)
+                setLoading(false)
+            }, 400)
+            return
+        }
+        // ── END TEMP ──
+
         try {
             const res = await api.get('/orders/admin/all')
             setOrders(res.data?.orders ?? res.data ?? [])
@@ -390,24 +380,22 @@ export default function AdminOrders() {
         setOrders(prev => prev.map(o => o._id === id ? { ...o, status: newStatus } : o))
     }
 
-    // Filter + search
     const filtered = orders.filter(o => {
-        const matchStatus = statusFilter === 'all' || o.status === statusFilter
         const q = search.toLowerCase()
-        const matchSearch = !q ||
+        if (!q) return true
+        return (
             o._id?.toLowerCase().includes(q) ||
             o.orderNumber?.toLowerCase().includes(q) ||
             o.customer?.name?.toLowerCase().includes(q) ||
             o.shippingAddress?.fullName?.toLowerCase().includes(q) ||
             o.customer?.email?.toLowerCase().includes(q) ||
             o.items?.some(i => i.name?.toLowerCase().includes(q))
-        return matchStatus && matchSearch
+        )
     })
 
     const totalPages = Math.ceil(filtered.length / PER_PAGE)
     const paginated = filtered.slice((page - 1) * PER_PAGE, page * PER_PAGE)
 
-    // Stats
     const stats = {
         total: orders.length,
         pending: orders.filter(o => o.status === 'pending').length,
@@ -424,22 +412,21 @@ export default function AdminOrders() {
         <div className="min-h-screen" style={{ background: '#050709', color: 'white' }}>
             <style>{`
                 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
-                @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-                .fade-in { animation: fadeIn 0.35s ease both; }
-                ::-webkit-scrollbar { width: 4px; }
+                @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+                .fade-in { animation: fadeIn 0.3s ease both; }
+                ::-webkit-scrollbar { width: 4px; height: 4px; }
                 ::-webkit-scrollbar-track { background: transparent; }
                 ::-webkit-scrollbar-thumb { background: rgba(220,38,38,0.3); border-radius: 2px; }
             `}</style>
 
-            {/* Top ambient glow */}
             <div className="fixed top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-600/40 to-transparent pointer-events-none z-10" />
             <div className="fixed -top-40 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full pointer-events-none"
                 style={{ background: 'radial-gradient(ellipse, rgba(220,38,38,0.07) 0%, transparent 70%)' }} />
 
-            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+            <div className="relative max-w-7xl mx-auto">
 
                 {/* ── Page Header ── */}
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10 fade-in">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 fade-in">
                     <div>
                         <div className="inline-flex items-center gap-2 mb-3">
                             <div className="w-5 h-px bg-red-600/60" />
@@ -450,7 +437,7 @@ export default function AdminOrders() {
                             <span className="font-['Orbitron',monospace] text-[9px] tracking-[0.22em] text-white/20">/ Orders</span>
                         </div>
                         <h1 className="font-['Orbitron',monospace] font-black text-white leading-tight tracking-tight"
-                            style={{ fontSize: 'clamp(24px, 4vw, 38px)' }}>
+                            style={{ fontSize: 'clamp(22px, 3.5vw, 34px)' }}>
                             Order Management
                         </h1>
                         <p className="text-[13px] text-white/40 mt-2 tracking-wide">
@@ -467,7 +454,7 @@ export default function AdminOrders() {
                 </div>
 
                 {/* ── Stat Cards ── */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-8 fade-in">
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-7 fade-in">
                     <StatCard icon={Package} label="Total Orders" value={stats.total} />
                     <StatCard icon={Clock} label="Pending" value={stats.pending} accent={stats.pending > 0 ? 'ACTION' : ''} />
                     <StatCard icon={RefreshCw} label="Processing" value={stats.processing} />
@@ -476,60 +463,37 @@ export default function AdminOrders() {
                     <StatCard icon={TrendingUp} label="Revenue" value={`₨${(stats.revenue / 1000).toFixed(0)}K`} sub="excl. cancelled" />
                 </div>
 
-                {/* ── Filters & Search ── */}
-                <div className="flex flex-col sm:flex-row gap-3 mb-6 fade-in">
-                    {/* Search */}
-                    <div className="relative flex-1">
-                        <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
-                        <input
-                            type="text"
-                            value={search}
-                            onChange={e => { setSearch(e.target.value); setPage(1) }}
-                            placeholder="Search by order ID, customer, product…"
-                            className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.03]
-                            text-[13px] text-white placeholder-white/25 tracking-wide
-                            focus:outline-none focus:border-red-600/40 focus:bg-red-600/[0.04]
-                            transition-all duration-200"
-                        />
-                        {search && (
-                            <button onClick={() => setSearch('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60">
-                                <X size={14} />
-                            </button>
-                        )}
-                    </div>
-
-                    {/* Status filter tabs */}
-                    <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-                        {ALL_STATUSES.map(s => {
-                            const cfg = STATUS_CONFIG[s]
-                            const active = statusFilter === s
-                            const count = s === 'all' ? orders.length : orders.filter(o => o.status === s).length
-                            return (
-                                <button key={s} onClick={() => { setStatusFilter(s); setPage(1) }}
-                                    className={`shrink-0 px-3 py-2 rounded-xl border text-[10px] font-['Orbitron',monospace] font-bold tracking-[0.15em] uppercase transition-all duration-200
-                                    ${active
-                                            ? s === 'all'
-                                                ? 'bg-red-600/20 border-red-600/50 text-red-400'
-                                                : `${cfg.bg} ${cfg.color} border-current`
-                                            : 'border-white/[0.07] text-white/30 hover:text-white/60 hover:border-white/15'
-                                        }`}>
-                                    {s === 'all' ? 'All' : cfg.label}
-                                    <span className="ml-1.5 opacity-60">({count})</span>
-                                </button>
-                            )
-                        })}
-                    </div>
+                {/* ── Search (filters removed — search only) ── */}
+                <div className="relative mb-5 fade-in">
+                    <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
+                    <input
+                        type="text"
+                        value={search}
+                        onChange={e => { setSearch(e.target.value); setPage(1) }}
+                        placeholder="Search by order ID, customer, product…"
+                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.03]
+                        text-[13px] text-white placeholder-white/25 tracking-wide
+                        focus:outline-none focus:border-red-600/40 focus:bg-red-600/[0.04]
+                        transition-all duration-200"
+                    />
+                    {search && (
+                        <button onClick={() => setSearch('')}
+                            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60">
+                            <X size={14} />
+                        </button>
+                    )}
                 </div>
 
-                {/* ── Orders List ── */}
-                <div className="space-y-2.5 fade-in">
+                {/* ── Orders Table ── */}
+                <div className="rounded-2xl border border-white/[0.06] bg-white/[0.015] overflow-hidden fade-in">
                     {loading ? (
-                        Array.from({ length: 5 }).map((_, i) => (
-                            <div key={i} className="h-[88px] rounded-2xl border border-white/[0.04] bg-white/[0.01] animate-pulse" />
-                        ))
+                        <div className="p-4 space-y-2.5">
+                            {Array.from({ length: 6 }).map((_, i) => (
+                                <div key={i} className="h-[52px] rounded-lg border border-white/[0.04] bg-white/[0.01] animate-pulse" />
+                            ))}
+                        </div>
                     ) : error ? (
-                        <div className="flex flex-col items-center gap-3 py-20 border border-dashed border-white/[0.07] rounded-3xl">
+                        <div className="flex flex-col items-center gap-3 py-20">
                             <AlertCircle size={32} className="text-red-500/50" />
                             <p className="text-white/40 text-[13px]">{error}</p>
                             <button onClick={fetchOrders}
@@ -539,22 +503,103 @@ export default function AdminOrders() {
                             </button>
                         </div>
                     ) : paginated.length === 0 ? (
-                        <div className="flex flex-col items-center gap-3 py-24 border border-dashed border-white/[0.07] rounded-3xl">
+                        <div className="flex flex-col items-center gap-3 py-24">
                             <Package size={36} className="text-white/15" />
                             <p className="font-['Orbitron',monospace] text-[10px] tracking-[0.28em] text-white/25 uppercase">
-                                {search || statusFilter !== 'all' ? 'No orders match your filter' : 'No orders yet'}
+                                {search ? 'No orders match your search' : 'No orders yet'}
                             </p>
                         </div>
                     ) : (
-                        paginated.map(order => (
-                            <OrderRow key={order._id} order={order} onView={setSelectedOrder} />
-                        ))
+                        <div className="overflow-x-auto">
+                            <table className="w-full min-w-[820px] border-collapse">
+                                <thead>
+                                    <tr className="border-b border-white/[0.07]">
+                                        <Th>Order</Th>
+                                        <Th>Customer</Th>
+                                        <Th>Items</Th>
+                                        <Th className="hidden md:table-cell">Date</Th>
+                                        <Th>Status</Th>
+                                        <Th className="text-right">Total</Th>
+                                        <Th className="text-center">View</Th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {paginated.map((order, idx) => (
+                                        <tr key={order._id}
+                                            className={`group border-b border-white/[0.04] last:border-0 hover:bg-red-600/[0.04] transition-colors duration-150 cursor-pointer ${idx % 2 === 1 ? 'bg-white/[0.008]' : ''}`}
+                                            onClick={() => setSelectedOrder(order)}>
+
+                                            <td className="px-4 py-3.5">
+                                                <span className="font-['Orbitron',monospace] text-[11px] font-bold text-white tracking-wider">
+                                                    #{order.orderNumber ?? order._id?.slice(-6).toUpperCase()}
+                                                </span>
+                                            </td>
+
+                                            <td className="px-4 py-3.5 max-w-[180px]">
+                                                <p className="text-[13px] text-white/75 font-medium truncate">
+                                                    {order.customer?.name ?? order.shippingAddress?.fullName ?? 'Customer'}
+                                                </p>
+                                                <p className="text-[11px] text-white/30 truncate">
+                                                    {order.customer?.email ?? order.shippingAddress?.city ?? ''}
+                                                </p>
+                                            </td>
+
+                                            <td className="px-4 py-3.5 max-w-[220px]">
+                                                <div className="flex items-center gap-2">
+                                                    <div className="flex -space-x-2 shrink-0">
+                                                        {order.items?.slice(0, 3).map((item, i) => (
+                                                            <div key={i} className="w-7 h-7 rounded-md border-2 border-[#050709] overflow-hidden bg-white/[0.05]"
+                                                                style={{ zIndex: 3 - i }}>
+                                                                {item.image
+                                                                    ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                                    : <div className="w-full h-full flex items-center justify-center"><Package size={10} className="text-white/20" /></div>
+                                                                }
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                    <p className="text-[12px] text-white/40 truncate">
+                                                        {order.items?.length ?? 0} item{order.items?.length !== 1 ? 's' : ''}
+                                                    </p>
+                                                </div>
+                                            </td>
+
+                                            <td className="px-4 py-3.5 hidden md:table-cell">
+                                                <div className="flex items-center gap-1.5 text-white/40 text-[12px]">
+                                                    <Calendar size={11} />
+                                                    {fmtDate(order.createdAt)}
+                                                </div>
+                                            </td>
+
+                                            <td className="px-4 py-3.5">
+                                                <StatusBadge status={order.status} />
+                                            </td>
+
+                                            <td className="px-4 py-3.5 text-right">
+                                                <span className="font-['Orbitron',monospace] text-[13px] font-black text-white">
+                                                    {fmt(order.totalAmount ?? order.total ?? 0)}
+                                                </span>
+                                            </td>
+
+                                            <td className="px-4 py-3.5 text-center">
+                                                <button onClick={(e) => { e.stopPropagation(); setSelectedOrder(order) }}
+                                                    className="inline-flex w-8 h-8 rounded-lg border border-white/[0.07]
+                                                    items-center justify-center text-white/35
+                                                    hover:border-red-600/40 hover:text-red-400 hover:bg-red-600/[0.08]
+                                                    transition-all duration-150">
+                                                    <Eye size={14} />
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
                     )}
                 </div>
 
                 {/* ── Pagination ── */}
                 {totalPages > 1 && (
-                    <div className="flex items-center justify-between mt-6 pt-5 border-t border-white/[0.05]">
+                    <div className="flex items-center justify-between mt-5 pt-5 border-t border-white/[0.05]">
                         <span className="text-[12px] text-white/30">
                             Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, filtered.length)} of {filtered.length}
                         </span>
@@ -584,7 +629,6 @@ export default function AdminOrders() {
                 )}
             </div>
 
-            {/* ── Order Detail Modal ── */}
             {selectedOrder && (
                 <OrderModal
                     order={selectedOrder}
@@ -595,4 +639,3 @@ export default function AdminOrders() {
         </div>
     )
 }
-
