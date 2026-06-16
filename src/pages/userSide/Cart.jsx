@@ -153,7 +153,7 @@ export default function Cart() {
                           {item.name}
                         </Link>
                         <p className="text-xs text-neutral-500 mt-1 tracking-wider">
-                          UNIT · Rs. {item.price.toLocaleString()}
+                          UNIT · Rs. {item.price}
                         </p>
                       </div>
 
