@@ -7,6 +7,14 @@ import {
 } from 'lucide-react'
 import api from '../config/service'
 
+
+
+const card = `relative overflow-hidden bg-white/[0.03] border border-white/[0.07] rounded-2xl
+    backdrop-blur transition-all duration-300 hover:border-white/[0.11]`;
+const shimmerLine = `absolute top-0 left-0 right-0 h-px
+    bg-gradient-to-r from-transparent via-red-600/35 to-transparent`;
+
+
 // ── Status config ──────────────────────────────────────────
 const STATUS_CONFIG = {
     pending: {
@@ -453,36 +461,82 @@ export default function AdminOrders() {
                     </button>
                 </div>
 
-                {/* ── Stat Cards ── */}
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 mb-7 fade-in">
+                {/* ── Stat Cards (2 rows × 3) ── */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 auto-rows-fr mb-9 fade-in ">
                     <StatCard icon={Package} label="Total Orders" value={stats.total} />
-                    <StatCard icon={Clock} label="Pending" value={stats.pending} accent={stats.pending > 0 ? 'ACTION' : ''} />
+                    <StatCard icon={Clock} label="Pending" value={stats.pending} />
                     <StatCard icon={RefreshCw} label="Processing" value={stats.processing} />
                     <StatCard icon={Truck} label="Shipped" value={stats.shipped} />
                     <StatCard icon={CheckCircle} label="Delivered" value={stats.delivered} />
-                    <StatCard icon={TrendingUp} label="Revenue" value={`₨${(stats.revenue / 1000).toFixed(0)}K`} sub="excl. cancelled" />
+                    <StatCard icon={TrendingUp} label="Revenue" value={`₨ ${(stats.revenue / 1000).toFixed(0)}K`} />
                 </div>
 
-                {/* ── Search (filters removed — search only) ── */}
-                <div className="relative mb-5 fade-in">
-                    <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
-                    <input
-                        type="text"
-                        value={search}
-                        onChange={e => { setSearch(e.target.value); setPage(1) }}
-                        placeholder="Search by order ID, customer, product…"
-                        className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.03]
+
+
+                {/* 
+                <div className={`${card} p-4 sm:p-5 mb-4 sm:mb-5`}>
+                    <span className={shimmerLine} />
+                    <div className="flex items-center w-full gap-2 mb-3 sm:mb-4">
+                        
+                        <div className="relative mb-5 fade-in">
+                            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={e => { setSearch(e.target.value); setPage(1) }}
+                                placeholder="Search by order ID, customer, product…"
+                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.03]
                         text-[13px] text-white placeholder-white/25 tracking-wide
                         focus:outline-none focus:border-red-600/40 focus:bg-red-600/[0.04]
                         transition-all duration-200"
-                    />
-                    {search && (
-                        <button onClick={() => setSearch('')}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60">
-                            <X size={14} />
-                        </button>
-                    )}
+                            />
+                            {search && (
+                                <button onClick={() => setSearch('')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60">
+                                    <X size={14} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
+
+                </div> */}
+
+
+
+                <div className={`${card} p-4 sm:p-5 mb-4 sm:mb-5`}>
+                    <span className={shimmerLine} />
+                    <div className="flex flex-col justify-center w-full gap-2">
+                        <div className='flex gap-2 items-center'>
+                            <Search size={12} className="text-red-500 shrink-0" />
+                            <p className="font-['Orbitron',monospace] text-[10px] sm:text-[11px] tracking-[0.12em] uppercase text-white/35">
+                                Search by order ID, customer, product…
+                            </p>
+                        </div>
+                        {/* ── Search (filters removed — search only) ── */}
+                        <div className="relative w-full fade-in">
+                            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
+                            <input
+                                type="text"
+                                value={search}
+                                onChange={e => { setSearch(e.target.value); setPage(1) }}
+                                placeholder="Search..."
+                                className="w-full pl-10 pr-10 py-3 rounded-xl border border-white/[0.08] bg-white/[0.03]
+                    text-[13px] text-white placeholder-white/25 tracking-wide
+                    focus:outline-none focus:border-red-600/40 focus:bg-red-600/[0.04]
+                    transition-all duration-200"
+                            />
+                            {search && (
+                                <button onClick={() => setSearch('')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60">
+                                    <X size={14} />
+                                </button>
+                            )}
+                        </div>
+                    </div>
                 </div>
+
+
+
 
                 {/* ── Orders Table ── */}
                 <div className="rounded-2xl border border-white/[0.06] bg-white/[0.015] overflow-hidden fade-in">
