@@ -154,7 +154,7 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4"
             style={{ background: 'rgba(0,0,0,0.75)', backdropFilter: 'blur(6px)' }}>
-            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-3xl border border-white/[0.08]"
+            <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-3xl border border-white/[0.08]"
                 style={{ background: '#08080a' }}>
 
                 <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full pointer-events-none"
@@ -471,45 +471,13 @@ export default function AdminOrders() {
                     <StatCard icon={TrendingUp} label="Revenue" value={`₨ ${(stats.revenue / 1000).toFixed(0)}K`} />
                 </div>
 
-
-
-                {/* 
-                <div className={`${card} p-4 sm:p-5 mb-4 sm:mb-5`}>
-                    <span className={shimmerLine} />
-                    <div className="flex items-center w-full gap-2 mb-3 sm:mb-4">
-                        
-                        <div className="relative mb-5 fade-in">
-                            <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
-                            <input
-                                type="text"
-                                value={search}
-                                onChange={e => { setSearch(e.target.value); setPage(1) }}
-                                placeholder="Search by order ID, customer, product…"
-                                className="w-full pl-10 pr-4 py-3 rounded-xl border border-white/[0.08] bg-white/[0.03]
-                        text-[13px] text-white placeholder-white/25 tracking-wide
-                        focus:outline-none focus:border-red-600/40 focus:bg-red-600/[0.04]
-                        transition-all duration-200"
-                            />
-                            {search && (
-                                <button onClick={() => setSearch('')}
-                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/60">
-                                    <X size={14} />
-                                </button>
-                            )}
-                        </div>
-                    </div>
-
-                </div> */}
-
-
-
                 <div className={`${card} p-4 sm:p-5 mb-4 sm:mb-5`}>
                     <span className={shimmerLine} />
                     <div className="flex flex-col justify-center w-full gap-2">
                         <div className='flex gap-2 items-center'>
                             <Search size={12} className="text-red-500 shrink-0" />
                             <p className="font-['Orbitron',monospace] text-[10px] sm:text-[11px] tracking-[0.12em] uppercase text-white/35">
-                                Search by order ID, customer, product…
+                                Search by orders ID, customers…
                             </p>
                         </div>
                         {/* ── Search (filters removed — search only) ── */}
@@ -535,10 +503,7 @@ export default function AdminOrders() {
                     </div>
                 </div>
 
-
-
-
-                {/* ── Orders Table ── */}
+                {/* ── Orders Table / Cards ── */}
                 <div className="rounded-2xl border border-white/[0.06] bg-white/[0.015] overflow-hidden fade-in">
                     {loading ? (
                         <div className="p-4 space-y-2.5">
@@ -552,7 +517,7 @@ export default function AdminOrders() {
                             <p className="text-white/40 text-[13px]">{error}</p>
                             <button onClick={fetchOrders}
                                 className="px-4 py-2 rounded-xl bg-red-600/10 border border-red-600/25 text-red-400
-                                font-['Orbitron',monospace] text-[10px] tracking-widest uppercase hover:bg-red-600/20 transition-all">
+                font-['Orbitron',monospace] text-[10px] tracking-widest uppercase hover:bg-red-600/20 transition-all">
                                 Try Again
                             </button>
                         </div>
@@ -564,123 +529,159 @@ export default function AdminOrders() {
                             </p>
                         </div>
                     ) : (
-                        <div className="overflow-x-auto">
-                            <table className="w-full min-w-[820px] border-collapse">
-                                <thead>
-                                    <tr className="border-b border-white/[0.07]">
-                                        <Th>Order</Th>
-                                        <Th>Customer</Th>
-                                        <Th>Items</Th>
-                                        <Th className="hidden md:table-cell">Date</Th>
-                                        <Th>Status</Th>
-                                        <Th className="text-right">Total</Th>
-                                        <Th className="text-center">View</Th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {paginated.map((order, idx) => (
-                                        <tr key={order._id}
-                                            className={`group border-b border-white/[0.04] last:border-0 hover:bg-red-600/[0.04] transition-colors duration-150 cursor-pointer ${idx % 2 === 1 ? 'bg-white/[0.008]' : ''}`}
-                                            onClick={() => setSelectedOrder(order)}>
-
-                                            <td className="px-4 py-3.5">
-                                                <span className="font-['Orbitron',monospace] text-[11px] font-bold text-white tracking-wider">
+                        <>
+                            {/* ── Mobile / Tablet: Card list (below lg) ── */}
+                            <div className="lg:hidden divide-y divide-white/[0.05]">
+                                {paginated.map((order) => (
+                                    <div
+                                        key={order._id}
+                                        onClick={() => setSelectedOrder(order)}
+                                        className="p-4 active:bg-red-600/[0.05] hover:bg-red-600/[0.04] transition-colors cursor-pointer"
+                                    >
+                                        <div className="flex items-start justify-between gap-3 mb-3">
+                                            <div className="min-w-0">
+                                                <span className="font-['Orbitron',monospace] text-[12px] font-bold text-white tracking-wider">
                                                     #{order.orderNumber ?? order._id?.slice(-6).toUpperCase()}
                                                 </span>
-                                            </td>
-
-                                            <td className="px-4 py-3.5 max-w-[180px]">
-                                                <p className="text-[13px] text-white/75 font-medium truncate">
+                                                <p className="text-[13px] text-white/75 font-medium truncate mt-1">
                                                     {order.customer?.name ?? order.shippingAddress?.fullName ?? 'Customer'}
                                                 </p>
                                                 <p className="text-[11px] text-white/30 truncate">
                                                     {order.customer?.email ?? order.shippingAddress?.city ?? ''}
                                                 </p>
-                                            </td>
+                                            </div>
+                                            <StatusBadge status={order.status} />
+                                        </div>
 
-                                            <td className="px-4 py-3.5 max-w-[220px]">
-                                                <div className="flex items-center gap-2">
-                                                    <div className="flex -space-x-2 shrink-0">
-                                                        {order.items?.slice(0, 3).map((item, i) => (
-                                                            <div key={i} className="w-7 h-7 rounded-md border-2 border-[#050709] overflow-hidden bg-white/[0.05]"
-                                                                style={{ zIndex: 3 - i }}>
-                                                                {item.image
-                                                                    ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                                                    : <div className="w-full h-full flex items-center justify-center"><Package size={10} className="text-white/20" /></div>
-                                                                }
-                                                            </div>
-                                                        ))}
+                                        <div className="flex items-center gap-2 mb-3">
+                                            <div className="flex -space-x-2 shrink-0">
+                                                {order.items?.slice(0, 4).map((item, i) => (
+                                                    <div key={i} className="w-7 h-7 rounded-md border-2 border-[#050709] overflow-hidden bg-white/[0.05]"
+                                                        style={{ zIndex: 4 - i }}>
+                                                        {item.image
+                                                            ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                            : <div className="w-full h-full flex items-center justify-center"><Package size={10} className="text-white/20" /></div>
+                                                        }
                                                     </div>
-                                                    <p className="text-[12px] text-white/40 truncate">
-                                                        {order.items?.length ?? 0} item{order.items?.length !== 1 ? 's' : ''}
-                                                    </p>
-                                                </div>
-                                            </td>
+                                                ))}
+                                            </div>
+                                            <p className="text-[12px] text-white/40 truncate">
+                                                {order.items?.length ?? 0} item{order.items?.length !== 1 ? 's' : ''}
+                                            </p>
+                                        </div>
 
-                                            <td className="px-4 py-3.5 hidden md:table-cell">
-                                                <div className="flex items-center gap-1.5 text-white/40 text-[12px]">
-                                                    <Calendar size={11} />
-                                                    {fmtDate(order.createdAt)}
-                                                </div>
-                                            </td>
+                                        <div className="flex items-center justify-between pt-3 border-t border-white/[0.04]">
+                                            <div className="flex items-center gap-1.5 text-white/35 text-[11px]">
+                                                <Calendar size={11} />
+                                                {fmtDate(order.createdAt)}
+                                            </div>
+                                            <span className="font-['Orbitron',monospace] text-[14px] font-black text-white">
+                                                {fmt(order.totalAmount ?? order.total ?? 0)}
+                                            </span>
+                                        </div>
 
-                                            <td className="px-4 py-3.5">
-                                                <StatusBadge status={order.status} />
-                                            </td>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); setSelectedOrder(order) }}
+                                            className="mt-3 w-full inline-flex items-center justify-center gap-2 py-2 rounded-lg border border-white/[0.08]
+                            text-white/45 font-['Orbitron',monospace] text-[9px] tracking-widest uppercase
+                            hover:border-red-600/40 hover:text-red-400 hover:bg-red-600/[0.06] transition-all"
+                                        >
+                                            <Eye size={12} /> View Details
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
 
-                                            <td className="px-4 py-3.5 text-right">
-                                                <span className="font-['Orbitron',monospace] text-[13px] font-black text-white">
-                                                    {fmt(order.totalAmount ?? order.total ?? 0)}
-                                                </span>
-                                            </td>
-
-                                            <td className="px-4 py-3.5 text-center">
-                                                <button onClick={(e) => { e.stopPropagation(); setSelectedOrder(order) }}
-                                                    className="inline-flex w-8 h-8 rounded-lg border border-white/[0.07]
-                                                    items-center justify-center text-white/35
-                                                    hover:border-red-600/40 hover:text-red-400 hover:bg-red-600/[0.08]
-                                                    transition-all duration-150">
-                                                    <Eye size={14} />
-                                                </button>
-                                            </td>
+                            {/* ── Laptop / Desktop: Table (lg and up) ── */}
+                            <div className="hidden lg:block overflow-x-auto">
+                                <table className="w-full min-w-[820px] border-collapse">
+                                    <thead>
+                                        <tr className="border-b border-white/[0.07]">
+                                            <Th>Order</Th>
+                                            <Th>Customer</Th>
+                                            <Th>Items</Th>
+                                            <Th>Date</Th>
+                                            <Th>Status</Th>
+                                            <Th className="text-right">Total</Th>
+                                            <Th className="text-center">View</Th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        {paginated.map((order, idx) => (
+                                            <tr key={order._id}
+                                                className={`group border-b border-white/[0.04] last:border-0 hover:bg-red-600/[0.04] transition-colors duration-150 cursor-pointer ${idx % 2 === 1 ? 'bg-white/[0.008]' : ''}`}
+                                                onClick={() => setSelectedOrder(order)}>
+
+                                                <td className="px-4 py-3.5">
+                                                    <span className="font-['Orbitron',monospace] text-[11px] font-bold text-white tracking-wider">
+                                                        #{order.orderNumber ?? order._id?.slice(-6).toUpperCase()}
+                                                    </span>
+                                                </td>
+
+                                                <td className="px-4 py-3.5 max-w-[180px]">
+                                                    <p className="text-[13px] text-white/75 font-medium truncate">
+                                                        {order.customer?.name ?? order.shippingAddress?.fullName ?? 'Customer'}
+                                                    </p>
+                                                    <p className="text-[11px] text-white/30 truncate">
+                                                        {order.customer?.email ?? order.shippingAddress?.city ?? ''}
+                                                    </p>
+                                                </td>
+
+                                                <td className="px-4 py-3.5 max-w-[220px]">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="flex -space-x-2 shrink-0">
+                                                            {order.items?.slice(0, 3).map((item, i) => (
+                                                                <div key={i} className="w-7 h-7 rounded-md border-2 border-[#050709] overflow-hidden bg-white/[0.05]"
+                                                                    style={{ zIndex: 3 - i }}>
+                                                                    {item.image
+                                                                        ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                                        : <div className="w-full h-full flex items-center justify-center"><Package size={10} className="text-white/20" /></div>
+                                                                    }
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                        <p className="text-[12px] text-white/40 truncate">
+                                                            {order.items?.length ?? 0} item{order.items?.length !== 1 ? 's' : ''}
+                                                        </p>
+                                                    </div>
+                                                </td>
+
+                                                <td className="px-4 py-3.5">
+                                                    <div className="flex items-center gap-1.5 text-white/40 text-[12px]">
+                                                        <Calendar size={11} />
+                                                        {fmtDate(order.createdAt)}
+                                                    </div>
+                                                </td>
+
+                                                <td className="px-4 py-3.5">
+                                                    <StatusBadge status={order.status} />
+                                                </td>
+
+                                                <td className="px-4 py-3.5 text-right">
+                                                    <span className="font-['Orbitron',monospace] text-[13px] font-black text-white">
+                                                        {fmt(order.totalAmount ?? order.total ?? 0)}
+                                                    </span>
+                                                </td>
+
+                                                <td className="px-4 py-3.5 text-center">
+                                                    <button onClick={(e) => { e.stopPropagation(); setSelectedOrder(order) }}
+                                                        className="inline-flex w-8 h-8 rounded-lg border border-white/[0.07]
+                                        items-center justify-center text-white/35
+                                        hover:border-red-600/40 hover:text-red-400 hover:bg-red-600/[0.08]
+                                        transition-all duration-150">
+                                                        <Eye size={14} />
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </>
                     )}
                 </div>
 
-                {/* ── Pagination ── */}
-                {totalPages > 1 && (
-                    <div className="flex items-center justify-between mt-5 pt-5 border-t border-white/[0.05]">
-                        <span className="text-[12px] text-white/30">
-                            Showing {(page - 1) * PER_PAGE + 1}–{Math.min(page * PER_PAGE, filtered.length)} of {filtered.length}
-                        </span>
-                        <div className="flex items-center gap-1.5">
-                            <button onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1}
-                                className="w-8 h-8 rounded-lg border border-white/[0.07] flex items-center justify-center
-                                text-white/40 hover:text-white hover:border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-                                <ChevronLeft size={14} />
-                            </button>
-                            {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
-                                <button key={p} onClick={() => setPage(p)}
-                                    className={`w-8 h-8 rounded-lg border font-['Orbitron',monospace] text-[11px] font-bold transition-all
-                                    ${page === p
-                                            ? 'bg-red-600/20 border-red-600/50 text-red-400'
-                                            : 'border-white/[0.07] text-white/30 hover:text-white hover:border-white/20'
-                                        }`}>
-                                    {p}
-                                </button>
-                            ))}
-                            <button onClick={() => setPage(p => Math.min(totalPages, p + 1))} disabled={page === totalPages}
-                                className="w-8 h-8 rounded-lg border border-white/[0.07] flex items-center justify-center
-                                text-white/40 hover:text-white hover:border-white/20 disabled:opacity-30 disabled:cursor-not-allowed transition-all">
-                                <ChevronRight size={14} />
-                            </button>
-                        </div>
-                    </div>
-                )}
+
             </div>
 
             {selectedOrder && (
