@@ -22,7 +22,7 @@ import Forgot from "../pages/Forgot"
 import ResetPassword from "../pages/ResetPassword"
 
 export default function App() {
-    
+
     return (
         <BrowserRouter>
             {/* AuthProvider wraps everything so any component can call useAuth() */}
