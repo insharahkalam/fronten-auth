@@ -30,6 +30,8 @@ export default function ForgotPassword() {
             toast.success("Reset link sent!");
             setSent(true);
         } catch (err) {
+            console.log(err.response,'check resssssss');
+            
             toast.error(err.response?.data?.message || "Something went wrong");
         } finally {
             setLoading(false);
