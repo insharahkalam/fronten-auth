@@ -21,7 +21,6 @@ export default function Dashboard() {
 
   const [loading, setLoading] = useState(false);
 
-  // ✅ FETCH STATS
   const fetchStats = async () => {
     try {
       setLoading(true);
@@ -32,13 +31,17 @@ export default function Dashboard() {
       const productsRes = await api.get('/products/getAllProduct');
       console.log(productsRes, "res product check");
 
+      const ordersRes = await api.get('/orders/all');
+      console.log(ordersRes, "res order check");
+
       const users = usersRes?.data.allUser || [];
       const products = productsRes?.data.getProduct || [];
+      const orders = ordersRes?.data.orders || [];
 
       setStats({
         users: users.length,
         products: products.length,
-        orders: 0, // agar API nahi hai
+        orders: orders.length,
       });
     } catch (err) {
       console.log("Error fetching stats:", err);
@@ -176,8 +179,8 @@ export default function Dashboard() {
                 )}
               </h3>
               <span className={`mb-1 rounded-full px-2.5 py-0.5 font-rajdhani text-xs font-semibold tracking-wide ${dir === "up"
-                  ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                  : "bg-red-500/10 text-red-400 border border-red-500/20"
+                ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
+                : "bg-red-500/10 text-red-400 border border-red-500/20"
                 }`}>
                 {change}
               </span>

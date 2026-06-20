@@ -1,9 +1,7 @@
 import { useState, useEffect } from 'react'
 import {
-    Package, Search, Eye, Truck, CheckCircle, Clock, XCircle, RefreshCw,
-    MapPin, Phone, Mail, Calendar, DollarSign,
-    TrendingUp, ShieldCheck, User, Box, SlidersHorizontal, X,
-    ChevronLeft, ChevronRight, AlertCircle, Loader2
+    Package, Search, Eye, Truck, CheckCircle, Clock, XCircle, RefreshCw, MapPin, Phone, Mail, Calendar, DollarSign,
+    TrendingUp, ShieldCheck, User, Box, SlidersHorizontal, X, ChevronLeft, ChevronRight, AlertCircle, Loader
 } from 'lucide-react'
 import api from '../config/service'
 
@@ -12,98 +10,16 @@ const card = `relative overflow-hidden bg-white/[0.03] border border-white/[0.07
 const shimmerLine = `absolute top-0 left-0 right-0 h-px
     bg-gradient-to-r from-transparent via-red-600/35 to-transparent`;
 
-
 // ── Status config ──────────────────────────────────────────
 const STATUS_CONFIG = {
-    pending: {
-        label: 'Pending',
-        color: 'text-amber-400',
-        bg: 'bg-amber-500/10 border-amber-500/25',
-        dot: 'bg-amber-400',
-        icon: Clock,
-    },
-    processing: {
-        label: 'Processing',
-        color: 'text-blue-400',
-        bg: 'bg-blue-500/10 border-blue-500/25',
-        dot: 'bg-blue-400',
-        icon: RefreshCw,
-    },
-    shipped: {
-        label: 'Shipped',
-        color: 'text-purple-400',
-        bg: 'bg-purple-500/10 border-purple-500/25',
-        dot: 'bg-purple-400',
-        icon: Truck,
-    },
-    delivered: {
-        label: 'Delivered',
-        color: 'text-emerald-400',
-        bg: 'bg-emerald-500/10 border-emerald-500/25',
-        dot: 'bg-emerald-400',
-        icon: CheckCircle,
-    },
-    cancelled: {
-        label: 'Cancelled',
-        color: 'text-red-400',
-        bg: 'bg-red-500/10 border-red-500/25',
-        dot: 'bg-red-500',
-        icon: XCircle,
-    },
+    pending: { label: 'Pending', color: 'text-amber-400', bg: 'bg-amber-500/10 border-amber-500/25', dot: 'bg-amber-400', icon: Clock },
+    processing: { label: 'Processing', color: 'text-blue-400', bg: 'bg-blue-500/10 border-blue-500/25', dot: 'bg-blue-400', icon: RefreshCw },
+    shipped: { label: 'Shipped', color: 'text-purple-400', bg: 'bg-purple-500/10 border-purple-500/25', dot: 'bg-purple-400', icon: Truck },
+    delivered: { label: 'Delivered', color: 'text-emerald-400', bg: 'bg-emerald-500/10 border-emerald-500/25', dot: 'bg-emerald-400', icon: CheckCircle },
+    cancelled: { label: 'Cancelled', color: 'text-red-400', bg: 'bg-red-500/10 border-red-500/25', dot: 'bg-red-500', icon: XCircle },
 }
 
-// ── TEMP: fake sample data — REMOVE this block once API is confirmed working ──
-const FAKE_ORDERS = [
-    {
-        _id: 'a1b2c3d4e5f6', orderNumber: 'OD2031', status: 'pending', createdAt: '2026-06-12T10:30:00Z',
-        customer: { name: 'Ahmed Raza', email: 'ahmed@gmail.com' },
-        items: [{ name: 'Wireless Mouse', quantity: 2, price: 2500, image: '' }, { name: 'USB-C Hub', quantity: 1, price: 7500, image: '' }],
-        totalAmount: 12500, subtotal: 12000, shippingFee: 500, paymentMethod: 'COD', paymentStatus: 'Pending',
-        shippingAddress: { fullName: 'Ahmed Raza', city: 'Karachi', province: 'Sindh', postalCode: '74200', address: 'House 12, Block 4, Gulshan-e-Iqbal', phone: '0300-1234567' }
-    },
-
-    {
-        _id: 'b2c3d4e5f6a1', orderNumber: 'OD2030', status: 'processing', createdAt: '2026-06-11T14:15:00Z',
-        customer: { name: 'Sara Khan', email: 'sara.khan@yahoo.com' },
-        items: [{ name: 'Bluetooth Speaker', quantity: 1, price: 4200, image: '' }],
-        totalAmount: 4200, subtotal: 4200, shippingFee: 0, paymentMethod: 'Card', paymentStatus: 'Paid',
-        shippingAddress: { fullName: 'Sara Khan', city: 'Lahore', province: 'Punjab', postalCode: '54000', address: 'Flat 7, Model Town', phone: '0312-9876543' }
-    },
-
-    {
-        _id: 'c3d4e5f6a1b2', orderNumber: 'OD2029', status: 'shipped', createdAt: '2026-06-10T09:00:00Z',
-        customer: { name: 'Bilal Hussain', email: 'bilal.h@outlook.com' },
-        items: [{ name: 'Gaming Keyboard', quantity: 1, price: 18900, image: '' }, { name: 'Mouse Pad', quantity: 2, price: 1000, image: '' }],
-        totalAmount: 38900, subtotal: 38400, shippingFee: 500, paymentMethod: 'COD', paymentStatus: 'Pending',
-        shippingAddress: { fullName: 'Bilal Hussain', city: 'Islamabad', province: 'Federal', postalCode: '44000', address: 'Street 5, F-10', phone: '0321-1122334' }
-    },
-
-    {
-        _id: 'd4e5f6a1b2c3', orderNumber: 'OD2028', status: 'delivered', createdAt: '2026-06-09T16:45:00Z',
-        customer: { name: 'Fatima Noor', email: 'fatima.n@gmail.com' },
-        items: [{ name: 'Laptop Stand', quantity: 1, price: 5500, image: '' }, { name: 'Webcam HD', quantity: 1, price: 8250, image: '' }, { name: 'Cable Organizer', quantity: 2, price: 1000, image: '' }, { name: 'Desk Mat', quantity: 1, price: 6000, image: '' }],
-        totalAmount: 21750, subtotal: 21750, shippingFee: 0, paymentMethod: 'Card', paymentStatus: 'Paid',
-        shippingAddress: { fullName: 'Fatima Noor', city: 'Karachi', province: 'Sindh', postalCode: '75500', address: 'Plot 22, DHA Phase 5', phone: '0333-4455667' }
-    },
-
-    {
-        _id: 'e5f6a1b2c3d4', orderNumber: 'OD2027', status: 'delivered', createdAt: '2026-06-08T11:20:00Z',
-        customer: { name: 'Usman Tariq', email: 'usman.t@hotmail.com' },
-        items: [{ name: 'Phone Case', quantity: 1, price: 6300, image: '' }],
-        totalAmount: 6300, subtotal: 6300, shippingFee: 0, paymentMethod: 'COD', paymentStatus: 'Paid',
-        shippingAddress: { fullName: 'Usman Tariq', city: 'Faisalabad', province: 'Punjab', postalCode: '38000', address: 'Madina Town', phone: '0345-7788990' }
-    },
-
-    {
-        _id: 'f6a1b2c3d4e5', orderNumber: 'OD2026', status: 'cancelled', createdAt: '2026-06-07T08:10:00Z',
-        customer: { name: 'Hina Aslam', email: 'hina.aslam@gmail.com' },
-        items: [{ name: 'Power Bank', quantity: 1, price: 9100, image: '' }],
-        totalAmount: 9100, subtotal: 9100, shippingFee: 0, paymentMethod: 'Card', paymentStatus: 'Refunded',
-        shippingAddress: { fullName: 'Hina Aslam', city: 'Karachi', province: 'Sindh', postalCode: '74600', address: 'Block 13-A, Gulistan-e-Jauhar', phone: '0301-5566778' }
-    },
-]
-const USE_FAKE_DATA = true
-// ── END TEMP block ──
+const USE_FAKE_DATA = false   // ✅ fake data band
 
 // ── Helpers ────────────────────────────────────────────────
 const fmt = (n) =>
@@ -115,10 +31,15 @@ const fmtDate = (d) =>
 const fmtTime = (d) =>
     new Date(d).toLocaleTimeString('en-PK', { hour: '2-digit', minute: '2-digit' })
 
+const customerName = (order) =>
+    order.user?.username ?? `${order.shippingAddress?.firstName ?? ''} ${order.shippingAddress?.lastName ?? ''}`.trim() ?? '—'
+
+const customerEmail = (order) =>
+    order.user?.email ?? order.shippingAddress?.email ?? '—'
+
 // ── Status Badge ───────────────────────────────────────────
 const StatusBadge = ({ status }) => {
     const cfg = STATUS_CONFIG[status] ?? STATUS_CONFIG.pending
-    const Icon = cfg.icon
     return (
         <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-['Orbitron',monospace] font-bold tracking-[0.15em] uppercase border ${cfg.bg} ${cfg.color}`}>
             <span className={`w-1.5 h-1.5 rounded-full ${cfg.dot}`} />
@@ -137,9 +58,7 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
     const handleStatus = async (newStatus) => {
         setUpdating(true)
         try {
-            if (!USE_FAKE_DATA) {
-                await api.put(`/orders/${order._id}/status`, { status: newStatus })
-            }
+            await api.put(`/orders/${order._id}/status`, { status: newStatus })
             setCurrentStatus(newStatus)
             onStatusChange(order._id, newStatus)
         } catch (e) {
@@ -167,7 +86,7 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                             <span className="font-['Orbitron',monospace] text-[9px] text-white/20">/ {order._id?.slice(-8).toUpperCase()}</span>
                         </div>
                         <h2 className="font-['Orbitron',monospace] font-black text-white text-lg tracking-tight">
-                            #{order.orderNumber ?? order._id?.slice(-6).toUpperCase()}
+                            #{order._id?.slice(-6).toUpperCase()}
                         </h2>
                         <div className="flex items-center gap-3 mt-2">
                             <StatusBadge status={currentStatus} />
@@ -191,9 +110,9 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                             </span>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                            <InfoRow icon={User} label="Name" value={order.customer?.name ?? order.shippingAddress?.fullName ?? '—'} />
-                            <InfoRow icon={Mail} label="Email" value={order.customer?.email ?? '—'} />
-                            <InfoRow icon={Phone} label="Phone" value={order.customer?.phone ?? order.shippingAddress?.phone ?? '—'} />
+                            <InfoRow icon={User} label="Name" value={customerName(order)} />
+                            <InfoRow icon={Mail} label="Email" value={customerEmail(order)} />
+                            <InfoRow icon={Phone} label="Phone" value={order.shippingAddress?.phone ?? '—'} />
                             <InfoRow icon={MapPin} label="City" value={order.shippingAddress?.city ?? '—'} />
                         </div>
                         {order.shippingAddress?.address && (
@@ -214,11 +133,11 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                             </span>
                         </div>
                         <div className="space-y-3">
-                            {order.items?.map((item, i) => (
+                            {order.products?.map((item, i) => (
                                 <div key={i} className="flex items-center gap-3 py-2 border-b border-white/[0.04] last:border-0">
                                     <div className="w-12 h-12 rounded-xl overflow-hidden shrink-0 border border-white/[0.07] bg-white/[0.03]">
                                         {item.image ? (
-                                            <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                            <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                                         ) : (
                                             <div className="w-full h-full flex items-center justify-center">
                                                 <Package size={16} className="text-white/20" />
@@ -226,7 +145,7 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <p className="text-[13px] text-white font-medium truncate">{item.name}</p>
+                                        <p className="text-[13px] text-white font-medium truncate">{item.title}</p>
                                         <p className="text-[11px] text-white/35 mt-0.5">
                                             Qty: {item.quantity} · {fmt(item.price)} each
                                         </p>
@@ -239,9 +158,14 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                         </div>
 
                         <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-2">
-                            {order.subtotal && (
+                            {order.subtotal !== undefined && (
                                 <div className="flex justify-between text-[12px] text-white/40">
                                     <span>Subtotal</span><span>{fmt(order.subtotal)}</span>
+                                </div>
+                            )}
+                            {order.tax !== undefined && (
+                                <div className="flex justify-between text-[12px] text-white/40">
+                                    <span>Tax</span><span>{fmt(order.tax)}</span>
                                 </div>
                             )}
                             {order.shippingFee !== undefined && (
@@ -252,7 +176,7 @@ const OrderModal = ({ order, onClose, onStatusChange }) => {
                             )}
                             <div className="flex justify-between items-center pt-2 border-t border-white/[0.05]">
                                 <span className="font-['Orbitron',monospace] text-[11px] font-bold tracking-widest text-white/60 uppercase">Total</span>
-                                <span className="font-['Orbitron',monospace] text-[18px] font-black text-white">{fmt(order.totalAmount ?? order.total)}</span>
+                                <span className="font-['Orbitron',monospace] text-[18px] font-black text-white">{fmt(order.totalAmount)}</span>
                             </div>
                         </div>
                     </div>
@@ -361,20 +285,9 @@ export default function AdminOrders() {
     const fetchOrders = async () => {
         setLoading(true)
         setError(null)
-
-        // ── TEMP: serve fake data instead of hitting the API ──
-        if (USE_FAKE_DATA) {
-            setTimeout(() => {
-                setOrders(FAKE_ORDERS)
-                setLoading(false)
-            }, 400)
-            return
-        }
-        // ── END TEMP ──
-
         try {
-            const res = await api.get('/orders/admin/all')
-            setOrders(res.data?.orders ?? res.data ?? [])
+            const res = await api.get('/orders/all')
+            setOrders(res.data?.orders ?? [])
         } catch (e) {
             setError('Failed to load orders. Please try again.')
         } finally {
@@ -391,11 +304,11 @@ export default function AdminOrders() {
         if (!q) return true
         return (
             o._id?.toLowerCase().includes(q) ||
-            o.orderNumber?.toLowerCase().includes(q) ||
-            o.customer?.name?.toLowerCase().includes(q) ||
-            o.shippingAddress?.fullName?.toLowerCase().includes(q) ||
-            o.customer?.email?.toLowerCase().includes(q) ||
-            o.items?.some(i => i.name?.toLowerCase().includes(q))
+            o.user?.username?.toLowerCase().includes(q) ||
+            o.user?.email?.toLowerCase().includes(q) ||
+            o.shippingAddress?.firstName?.toLowerCase().includes(q) ||
+            o.shippingAddress?.lastName?.toLowerCase().includes(q) ||
+            o.products?.some(i => i.title?.toLowerCase().includes(q))
         )
     })
 
@@ -411,7 +324,7 @@ export default function AdminOrders() {
         cancelled: orders.filter(o => o.status === 'cancelled').length,
         revenue: orders
             .filter(o => o.status !== 'cancelled')
-            .reduce((acc, o) => acc + (o.totalAmount ?? o.total ?? 0), 0),
+            .reduce((acc, o) => acc + (o.totalAmount ?? 0), 0),
     }
 
     return (
@@ -431,7 +344,6 @@ export default function AdminOrders() {
 
             <div className="relative max-w-7xl mx-auto">
 
-                {/* ── Page Header ── */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 fade-in">
                     <div>
                         <div className="inline-flex items-center gap-2 mb-3">
@@ -459,7 +371,6 @@ export default function AdminOrders() {
                     </button>
                 </div>
 
-                {/* ── Stat Cards (2 rows × 3) ── */}
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 auto-rows-fr mb-9 fade-in ">
                     <StatCard icon={Package} label="Total Orders" value={stats.total} />
                     <StatCard icon={Clock} label="Pending" value={stats.pending} />
@@ -478,7 +389,6 @@ export default function AdminOrders() {
                                 Search by orders ID, customers…
                             </p>
                         </div>
-                        {/* ── Search (filters removed — search only) ── */}
                         <div className="relative w-full fade-in">
                             <Search size={14} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/25 pointer-events-none" />
                             <input
@@ -501,7 +411,6 @@ export default function AdminOrders() {
                     </div>
                 </div>
 
-                {/* ── Orders Table / Cards ── */}
                 <div className="rounded-2xl border border-white/[0.06] bg-white/[0.015] overflow-hidden fade-in">
                     {loading ? (
                         <div className="p-4 space-y-2.5">
@@ -528,7 +437,6 @@ export default function AdminOrders() {
                         </div>
                     ) : (
                         <>
-                            {/* ── Mobile / Tablet: Card list (below lg) ── */}
                             <div className="lg:hidden divide-y divide-white/[0.05]">
                                 {paginated.map((order) => (
                                     <div
@@ -539,13 +447,13 @@ export default function AdminOrders() {
                                         <div className="flex items-start justify-between gap-3 mb-3">
                                             <div className="min-w-0">
                                                 <span className="font-['Orbitron',monospace] text-[12px] font-bold text-white tracking-wider">
-                                                    #{order.orderNumber ?? order._id?.slice(-6).toUpperCase()}
+                                                    #{order._id?.slice(-6).toUpperCase()}
                                                 </span>
                                                 <p className="text-[13px] text-white/75 font-medium truncate mt-1">
-                                                    {order.customer?.name ?? order.shippingAddress?.fullName ?? 'Customer'}
+                                                    {customerName(order)}
                                                 </p>
                                                 <p className="text-[11px] text-white/30 truncate">
-                                                    {order.customer?.email ?? order.shippingAddress?.city ?? ''}
+                                                    {customerEmail(order)}
                                                 </p>
                                             </div>
                                             <StatusBadge status={order.status} />
@@ -553,18 +461,18 @@ export default function AdminOrders() {
 
                                         <div className="flex items-center gap-2 mb-3">
                                             <div className="flex -space-x-2 shrink-0">
-                                                {order.items?.slice(0, 4).map((item, i) => (
+                                                {order.products?.slice(0, 4).map((item, i) => (
                                                     <div key={i} className="w-7 h-7 rounded-md border-2 border-[#050709] overflow-hidden bg-white/[0.05]"
                                                         style={{ zIndex: 4 - i }}>
                                                         {item.image
-                                                            ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                            ? <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                                                             : <div className="w-full h-full flex items-center justify-center"><Package size={10} className="text-white/20" /></div>
                                                         }
                                                     </div>
                                                 ))}
                                             </div>
                                             <p className="text-[12px] text-white/40 truncate">
-                                                {order.items?.length ?? 0} item{order.items?.length !== 1 ? 's' : ''}
+                                                {order.products?.length ?? 0} item{order.products?.length !== 1 ? 's' : ''}
                                             </p>
                                         </div>
 
@@ -574,7 +482,7 @@ export default function AdminOrders() {
                                                 {fmtDate(order.createdAt)}
                                             </div>
                                             <span className="font-['Orbitron',monospace] text-[14px] font-black text-white">
-                                                {fmt(order.totalAmount ?? order.total ?? 0)}
+                                                {fmt(order.totalAmount ?? 0)}
                                             </span>
                                         </div>
 
@@ -590,7 +498,6 @@ export default function AdminOrders() {
                                 ))}
                             </div>
 
-                            {/* ── Laptop / Desktop: Table (lg and up) ── */}
                             <div className="hidden lg:block overflow-x-auto">
                                 <table className="w-full min-w-[820px] border-collapse">
                                     <thead>
@@ -612,34 +519,34 @@ export default function AdminOrders() {
 
                                                 <td className="px-4 py-3.5">
                                                     <span className="font-['Orbitron',monospace] text-[11px] font-bold text-white tracking-wider">
-                                                        #{order.orderNumber ?? order._id?.slice(-6).toUpperCase()}
+                                                        #{order._id?.slice(-6).toUpperCase()}
                                                     </span>
                                                 </td>
 
                                                 <td className="px-4 py-3.5 max-w-[180px]">
                                                     <p className="text-[13px] text-white/75 font-medium truncate">
-                                                        {order.customer?.name ?? order.shippingAddress?.fullName ?? 'Customer'}
+                                                        {customerName(order)}
                                                     </p>
                                                     <p className="text-[11px] text-white/30 truncate">
-                                                        {order.customer?.email ?? order.shippingAddress?.city ?? ''}
+                                                        {customerEmail(order)}
                                                     </p>
                                                 </td>
 
                                                 <td className="px-4 py-3.5 max-w-[220px]">
                                                     <div className="flex items-center gap-2">
                                                         <div className="flex -space-x-2 shrink-0">
-                                                            {order.items?.slice(0, 3).map((item, i) => (
+                                                            {order.products?.slice(0, 3).map((item, i) => (
                                                                 <div key={i} className="w-7 h-7 rounded-md border-2 border-[#050709] overflow-hidden bg-white/[0.05]"
                                                                     style={{ zIndex: 3 - i }}>
                                                                     {item.image
-                                                                        ? <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                                                        ? <img src={item.image} alt={item.title} className="w-full h-full object-cover" />
                                                                         : <div className="w-full h-full flex items-center justify-center"><Package size={10} className="text-white/20" /></div>
                                                                     }
                                                                 </div>
                                                             ))}
                                                         </div>
                                                         <p className="text-[12px] text-white/40 truncate">
-                                                            {order.items?.length ?? 0} item{order.items?.length !== 1 ? 's' : ''}
+                                                            {order.products?.length ?? 0} item{order.products?.length !== 1 ? 's' : ''}
                                                         </p>
                                                     </div>
                                                 </td>
@@ -657,7 +564,7 @@ export default function AdminOrders() {
 
                                                 <td className="px-4 py-3.5 text-right">
                                                     <span className="font-['Orbitron',monospace] text-[13px] font-black text-white">
-                                                        {fmt(order.totalAmount ?? order.total ?? 0)}
+                                                        {fmt(order.totalAmount ?? 0)}
                                                     </span>
                                                 </td>
 
@@ -678,7 +585,6 @@ export default function AdminOrders() {
                         </>
                     )}
                 </div>
-
 
             </div>
 
