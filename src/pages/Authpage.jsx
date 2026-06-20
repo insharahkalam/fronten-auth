@@ -184,7 +184,7 @@ export default function AuthPage() {
                                     <label className="auth-label !mb-0">Password</label>
                                     {mode === "login" && (
                                         <Link
-                                            to="/forgot-password"
+                                            to="/forgot"
                                             className="font-orbitron text-[9px] tracking-[0.15em] text-neutral-700 hover:text-red-500 uppercase transition-colors"
                                         >
                                             Forgot?

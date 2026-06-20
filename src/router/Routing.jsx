@@ -18,8 +18,11 @@ import Checkout from "../pages/userSide/Checkout"
 import AuthPage from "../pages/Authpage"
 import AdminOrders from "../pages/AdminOrders"
 import Orders from "../pages/userSide/Orders"
+import Forgot from "../pages/Forgot"
+import ResetPassword from "../pages/ResetPassword"
 
 export default function App() {
+    
     return (
         <BrowserRouter>
             {/* AuthProvider wraps everything so any component can call useAuth() */}
@@ -28,6 +31,8 @@ export default function App() {
                 <Routes>
                     {/* ── Public / auth pages ── */}
                     <Route path="/auth" element={<AuthPage />} />
+                    <Route path="/forgot" element={<Forgot />} />
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
 
                     {/* ── Admin pages ── */}
                     <Route element={<AdminLayout />}>

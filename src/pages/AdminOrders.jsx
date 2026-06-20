@@ -7,8 +7,6 @@ import {
 } from 'lucide-react'
 import api from '../config/service'
 
-
-
 const card = `relative overflow-hidden bg-white/[0.03] border border-white/[0.07] rounded-2xl
     backdrop-blur transition-all duration-300 hover:border-white/[0.11]`;
 const shimmerLine = `absolute top-0 left-0 right-0 h-px
