@@ -69,6 +69,7 @@ export default function Orders() {
     setError(null)
     try {
       const res = await api.get('/orders/my-orders')
+      console.log(res, "orders response check")
       console.log(res.data, "orders response check")
       const data = res.data?.orders ?? []
       setOrders(data)

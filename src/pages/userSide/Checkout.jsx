@@ -10,6 +10,7 @@ import {
 import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 import toast from 'react-hot-toast'
+import api from '../../config/service'
 
 const PLACEHOLDER = 'https://placehold.co/80x80/0a0a0a/333?text=NOIR'
 
@@ -57,11 +58,36 @@ export default function Checkout() {
 
     const placeOrder = async () => {
         setPlacingOrder(true)
-        await new Promise(r => setTimeout(r, 1800))
-        dispatch(clearCart())
-        localStorage.removeItem("cart")
-        setOrderDone(true)
-        setPlacingOrder(false)
+        try {
+            const payload = {
+                items: items.map(item => ({
+                    productId: item.id || item._id,
+                    quantity: item.qty
+                })),
+                shippingAddress: {
+                    firstName: form.firstName,
+                    lastName: form.lastName,
+                    email: form.email,
+                    phone: form.phone,
+                    province: form.province,
+                    city: form.city,
+                    postalCode: form.zip,   // 👈 note: schema me "postalCode", form me "zip" hai
+                    address: form.address
+                },
+                paymentMethod: "card" // ya "cod" jo bhi flow ho
+            }
+
+            const res = await api.post('/orders/create', payload)
+            toast.success("Order Placed!")
+            dispatch(clearCart())
+            localStorage.removeItem("cart")
+            setOrderDone(true)
+        } catch (err) {
+            console.error(err)
+            toast.error(err?.response?.data?.message || "Failed to place order")
+        } finally {
+            setPlacingOrder(false)
+        }
     }
 
     /* ── Order success ── */
