@@ -59,6 +59,7 @@ export default function Orders() {
   const [expanded, setExpanded] = useState(null)
   const [filter, setFilter] = useState('All')
   const [search, setSearch] = useState('')
+  const [cancellingId, setCancellingId] = useState(null)
 
   useEffect(() => {
     fetchOrders()
@@ -78,6 +79,20 @@ export default function Orders() {
       setError('Failed to load your orders. Please try again.')
     } finally {
       setLoading(false)
+    }
+  }
+
+
+  const cancelOrder = async (orderId) => {
+    if (!window.confirm("Are you sure you want to cancel this order?")) return
+    setCancellingId(orderId)
+    try {
+      await api.put(`/orders/${orderId}/cancel`)
+      setOrders(prev => prev.map(o => o._id === orderId ? { ...o, status: 'cancelled' } : o))
+    } catch (err) {
+      alert(err?.response?.data?.message || "Failed to cancel order")
+    } finally {
+      setCancellingId(null)
     }
   }
 
@@ -448,12 +463,15 @@ export default function Orders() {
                         </button>
                       )}
                       {!['delivered', 'cancelled'].includes(order.status) && (
-                        <button className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
-                          border border-white/[0.09] text-white/35
-                          font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
-                          hover:border-red-600/35 hover:text-red-400 hover:bg-red-600/[0.05]
-                          transition-all duration-200">
-                          <XCircle size={12} /> Cancel
+                        <button
+                          onClick={() => cancelOrder(order._id)}
+                          disabled={cancellingId === order._id}
+                          className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl
+      border border-white/[0.09] text-white/35
+      font-['Orbitron',monospace] text-[9px] font-bold tracking-[0.14em] uppercase
+      hover:border-red-600/35 hover:text-red-400 hover:bg-red-600/[0.05]
+      disabled:opacity-40 transition-all duration-200">
+                          <XCircle size={12} /> {cancellingId === order._id ? 'Cancelling…' : 'Cancel'}
                         </button>
                       )}
                     </div>
