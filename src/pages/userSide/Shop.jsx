@@ -8,8 +8,7 @@ import Navbar from '../../components/Navbar'
 import Footer from '../../components/Footer'
 
 const SORT_OPTIONS = [
-    { value: 'default', label: 'All' },          
-    { value: 'featured', label: 'Featured' },    
+    { value: 'default', label: 'All' },
     { value: 'price-asc', label: 'Price: Low → High' },
     { value: 'price-desc', label: 'Price: High → Low' },
     { value: 'name-asc', label: 'Name: A → Z' },
